@@ -4,6 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Deployment.Application;
 using System.Drawing;
+using System.IO;
+using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows.Forms;
 
@@ -157,50 +160,60 @@ namespace My.GIS
             mapUpRight = new GISVertex(Math.Max(x1, x2), Math.Max(y1, y2));
             mapBottomLeft = new GISVertex(Math.Min(x1, x2), Math.Min(y1, y2));
         }
-        public double GetMapMinX()
-        {
-            return mapBottomLeft.x;
-        }
-        public double GetMapMaxX() { return mapUpRight.x; }
+        // these all all properties, which I didn'e even notice, I'm so stupid
+        public double minX() { return mapBottomLeft.x; }
+        public double maxX() { return mapUpRight.x; }
 
-        public double GetMapMinY() { return mapBottomLeft.y; }
-        public double GetMapMaxY() { return mapUpRight.y; }
-        public double GetMapWidth() { return mapUpRight.x - mapBottomLeft.x; }
-        public double GetMapHeight() { return mapUpRight.y - mapBottomLeft.y; }
+        public double minY() { return mapBottomLeft.y; }
+        public double maxY() { return mapUpRight.y; }
+        public double width() { return mapUpRight.x - mapBottomLeft.x; }
+        public double height() { return mapUpRight.y - mapBottomLeft.y; }
         double zoomFactor = 2;
+        double movingFactor = 0.25;
+        //read only property to represent  map extent using bottom-left and up-right
+        /*public double minX { get { return mapBottomLeft.y; } }
+        public double minY { get { return mapBottomLeft.y; } }
+        public double maxY { get { return mapUpRight.y; } }
+        public double maxX { get { return mapUpRight.x; } }*/
+
         public void ChangeExtent(GISMapActions action)
         {
             double newMapMinX = mapBottomLeft.x;
             double newMapMinY = mapBottomLeft.y;
             double newMapMaxX = mapUpRight.x;
             double newMapMaxY = mapUpRight.y;
-            double movingFactor = 0.25; 
             switch (action)
             {
+                //min is bottom left 
+                //max is up right
                 case GISMapActions.zoomin:
-                    newMapMinX = ((GetMapMinX() + GetMapMaxX()) - GetMapWidth() / zoomFactor) / 2;
-                    newMapMinY = ((GetMapMinY() + GetMapMaxX()) - GetMapHeight() / zoomFactor) / 2;
-                    newMapMaxX = ((GetMapMinX() + GetMapMaxX()) + GetMapWidth() / zoomFactor) / 2;
-                    newMapMaxY=((GetMapMinY() + GetMapMaxY()) + GetMapHeight() / zoomFactor) / 2;
+                    newMapMinX = ((minX() + maxX()) - width() / zoomFactor) / 2;
+                    newMapMinY = ((minY() + maxX()) - height() / zoomFactor) / 2;
+                    newMapMaxX = ((minX() + maxX()) + width() / zoomFactor) / 2;
+                    newMapMaxY = ((minY() + maxY()) + height() / zoomFactor) / 2;
                     break;
                 case GISMapActions.zoomout:
+                    newMapMinX = ((minX() + maxX()) - width() * zoomFactor) / 2;
+                    newMapMinY = ((minY() + maxY()) - height() * zoomFactor) / 2;
+                    newMapMaxX = ((minX() + maxX()) + height() * zoomFactor) / 2;
+                    newMapMaxY = ((minX() + maxX()) + width() * zoomFactor) / 2;
                     break;
-                case GISMapActions.moveup:
-                    newMapMinY = GetMapMinY() - GetMapHeight() * movingFactor;
-                    newMapMaxY = GetMapMaxY() - GetMapHeight() * movingFactor;
+                case GISMapActions.moveViewDown:
+                    newMapMinY = minY() - height() * movingFactor;
+                    newMapMaxY = maxY() - height() * movingFactor;
                     break;
-                case GISMapActions.movedown:
-                    newMapMinY += GetMapHeight ()* movingFactor;
+                case GISMapActions.moveViewUp:
+                    newMapMinY = minY() + height() * movingFactor;
 
-                    newMapMaxY += GetMapHeight ()* movingFactor;
+                    newMapMaxY = maxY() + height() * movingFactor;
                     break;
-                case GISMapActions.moveleft:
-                    newMapMinX = GetMapMinX() + GetMapWidth() * movingFactor;
-                    newMapMaxX = GetMapMaxX() + GetMapWidth() * movingFactor;
+                case GISMapActions.moveViewRight:
+                    newMapMinX = minX() + width() * movingFactor;
+                    newMapMaxX = maxX() + width() * movingFactor;
                     break;
-                case GISMapActions.moveright:
-                    newMapMaxX -= GetMapWidth() * movingFactor;
-                    newMapMaxX-= GetMapWidth() * movingFactor;
+                case GISMapActions.moveViewLeft:
+                    newMapMaxX = maxX() - width() * movingFactor;
+                    newMapMinX = minX() - width() * movingFactor;
                     break;
 
             }
@@ -229,12 +242,12 @@ namespace My.GIS
         {
             this.currentMapExtent = extent;
             this.ClientWindowRectangle = rectangle;
-            mapMinX = currentMapExtent.GetMapMinX();
-            mapMinY = currentMapExtent.GetMapMinY();
+            mapMinX = currentMapExtent.minX();
+            mapMinY = currentMapExtent.minY();
             clientWindowWidth = rectangle.Width;
             clientWindowHeight = rectangle.Height;
-            mapW = currentMapExtent.GetMapWidth();
-            mapH = currentMapExtent.GetMapHeight();
+            mapW = currentMapExtent.width();
+            mapH = currentMapExtent.height();
             scaleX = mapW / clientWindowWidth;
             scaleY = mapH / clientWindowHeight;
 
@@ -260,7 +273,59 @@ namespace My.GIS
     enum GISMapActions
     {
         zoomin, zoomout,
-        moveup, movedown, moveleft, moveright
+        moveViewDown, moveViewUp, moveViewRight, moveViewLeft
+    }
+    class Shapfile
+    {
+        [StructLayout(LayoutKind.Sequential, Pack = 4)]
+        struct ShapefileHeader
+        {
+            public int Unused1, Unused2, Unused3, Unused4;
+            public int Unused5, Unused6, Unused7, Unused8;
+            public int ShapeType;
+            public double Xmin;
+            public double Ymin;
+            public double Xmax;
+            public double Ymax;
+            public double Unused9, Unused10, Unused11, Unused12;
+
+        }
+        ShapefileHeader ReadShapfileHeader(BinaryReader br)
+        {
+            byte[] buff = br.ReadBytes(Marshal.SizeOf(typeof(ShapefileHeader))); //i have a buff
+            GCHandle handle = GCHandle.Alloc(buff, GCHandleType.Pinned); //move buff to handle
+            ShapefileHeader header = (ShapefileHeader)Marshal.PtrToStructure
+                (handle.AddrOfPinnedObject(), typeof(ShapefileHeader));//move handle to header
+            handle.Free();
+            return header;
+            /*  my understanding
+             * read a some bytes into buff, and pin the buff to handle 
+
+            and move the bytes pinned in handle to header
+            free the handle
+            then get(return) the header*/
+            /* understanding from the book
+             * so the handle actually get the address of the "buff" array 
+             * and we directly make the address of ShapefileHeader the same as the handle
+             * then release the handle, so the memory is now controled by .net, and we don't need to 
+             * manage the memory, because we can use GC.*/
+        }
+        //after get the header, we can now read the members  (after the header file)
+        //we create a method whichs utilzes the "ReadShapefileHeader" method,
+        //and then read the member
+        public void ReadShapefile(string shapefileName)
+        {
+            FileStream fsr = new FileStream(shapefileName, FileMode.Open);
+            BinaryReader br = new BinaryReader(fsr); // BinaryReader Constructors has three overloads
+            //one that takes only one paramter using UTF-8 encoding by default
+            ShapefileHeader header = ReadShapfileHeader(br);
+            int shapeType = header.ShapeType;
+            GISMapExtent extent=new GISMapExtent()
+            
+
+
+        }
+
     }
 
 }

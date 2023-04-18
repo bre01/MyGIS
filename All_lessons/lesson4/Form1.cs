@@ -87,76 +87,6 @@ namespace lesson4_form
 
         private void Form1_MouseClick(object sender, MouseEventArgs e)
         {
-            /*GISVertex clickedVertex=new GISVertex((double)e.X,(double)e.Y);
-            double minDistance = double.MaxValue;
-            int findID = -1;
-            for (int i=0;i<points.Count;i++)
-            {
-                double distance = (points[i]).VertexToPoint(clickedVertex);
-
-                if (distance< minDistance)
-                {
-                    minDistance=distance;
-                    findID = i;
-                }
-                if(minDistance>5 || findID == -1)
-                {
-                    MessageBox.Show("no point detected");
-
-                }
-                else
-                {
-                    MessageBox.Show(points[findID].attribute);
-                }
-
-               
-
-            }*/
-            /*GISVertex vertex = new GISVertex((double)e.X, (double)e.Y);
-            double mindistance = Double.MaxValue;
-            int findId = -1;
-            for (int i = 0; i < features.Count; i++)
-            {
-                double distance = features[i].spatialPart.centroid.GetDistanceThisVToV(vertex);
-                if (distance < mindistance)
-                {
-                    mindistance = distance;
-                    findId = i;
-                }
-            }
-            if (mindistance > 5 || findId == -1)
-            {
-                MessageBox.Show("not deteced");
-            }
-            else
-                MessageBox.Show(features[findId].GetAttribute(0).ToString());*/
-            GISVertex mouseLocation = view.ToMapVertex(new Point(e.X, e.Y));
-            double mindistance = Double.MaxValue;
-            int findId = -1;
-            for (int i = 0; i < features.Count; i++)
-            {
-                double distance = features[i].spatialPart.centroid.GetDistanceThisVToV(mouseLocation);
-                if (distance < mindistance)
-                {
-                    mindistance = distance;
-                    findId = i;
-                }
-            }
-            if (findId == -1)
-            {
-                MessageBox.Show("not spatial object");
-                return;
-            }
-            Point nearestPoint = view.ToScreenPoint(features[findId].spatialPart.centroid);
-            int screenDistance = Math.Abs(nearestPoint.X - e.X) + Math.Abs(nearestPoint.Y - e.Y);
-            if (screenDistance > 5)
-            {
-                MessageBox.Show("please click the object nearly");
-                return;
-            }
-            MessageBox.Show("the object's attribute is: \"" + features[findId].GetAttribute(0) + "\"");
-
-
 
         }
 
@@ -189,7 +119,7 @@ namespace lesson4_form
         }
         private void UpdateMap()
         {
-             Graphics graphics = CreateGraphics();
+            Graphics graphics = CreateGraphics();
             graphics.FillRectangle(new SolidBrush(Color.Black), ClientRectangle);
             for (int i = 0; i < features.Count; i++)
             {
@@ -215,7 +145,7 @@ namespace lesson4_form
         }
         private void map_button_Click(object sender, EventArgs e)
         {
-            GISMapActions mapActions=GISMapActions.zoomin;
+            GISMapActions mapActions = GISMapActions.zoomin;
             if ((Button)sender == button3)
             {
                 mapActions = GISMapActions.zoomin;
@@ -226,24 +156,67 @@ namespace lesson4_form
             }
             else if ((Button)sender == button5)
             {
-                mapActions = GISMapActions.moveup;
+                mapActions = GISMapActions.moveViewDown;
             }
             else if ((Button)sender == button6)
             {
-                mapActions=GISMapActions.movedown;
+                mapActions = GISMapActions.moveViewUp;
             }
-            else if((Button)sender == button7)
+            else if ((Button)sender == button7)
             {
-                mapActions = GISMapActions.moveleft;
+                mapActions = GISMapActions.moveViewRight;
             }
-            else if((Button)sender == button8)
+            else if ((Button)sender == button8)
             {
-                mapActions = GISMapActions.moveright;
+                mapActions = GISMapActions.moveViewLeft;
             }
             view.ChangeView(mapActions);
             this.UpdateMap();
 
 
+
+        }
+
+        private void Form1_DoubleClick(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            GISVertex mouseLocation = view.ToMapVertex(new Point(e.X, e.Y));
+            double mindistance = Double.MaxValue;
+            int findId = -1;
+            for (int i = 0; i < features.Count; i++)
+            {
+                double distance = features[i].spatialPart.centroid.GetDistanceThisVToV(mouseLocation);
+                if (distance < mindistance)
+                {
+                    mindistance = distance;
+                    findId = i;
+                }
+            }
+            if (findId == -1)
+            {
+                MessageBox.Show("not spatial object");
+                return;
+            }
+            Point nearestPoint = view.ToScreenPoint(features[findId].spatialPart.centroid);
+            int screenDistance = Math.Abs(nearestPoint.X - e.X) + Math.Abs(nearestPoint.Y - e.Y);
+            if (screenDistance > 5)
+            {
+                MessageBox.Show("please click the object nearly");
+                return;
+            }
+            MessageBox.Show("the object's attribute is: \"" + features[findId].GetAttribute(0) + "\"");
+
+
+
+        }
+
+        private void Form1_SizeChanged(object sender, EventArgs e)
+        {
+            button2_Click(sender, e);
 
         }
     }

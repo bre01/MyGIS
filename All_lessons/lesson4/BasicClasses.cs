@@ -155,8 +155,10 @@ namespace My.GIS
             this.mapBottomLeft = bottomLeft;
             this.mapUpRight = upRight;
         }
-        public GISMapExtent(double x1, double y1, double x2, double y2)
+        public GISMapExtent(double x1, double x2, double y1, double y2)
         {
+            //so the order of the parameter doesn't matter
+            //we use Math.Max() to determine which one is RightUp or BottomLeft
             mapUpRight = new GISVertex(Math.Max(x1, x2), Math.Max(y1, y2));
             mapBottomLeft = new GISVertex(Math.Min(x1, x2), Math.Min(y1, y2));
         }
@@ -275,6 +277,14 @@ namespace My.GIS
         zoomin, zoomout,
         moveViewDown, moveViewUp, moveViewRight, moveViewLeft
     }
+    public enum ShapeType
+    {
+        point = 1,
+        line = 3,
+        polygon = 5
+
+    }
+
     class Shapfile
     {
         [StructLayout(LayoutKind.Sequential, Pack = 4)]
@@ -290,6 +300,39 @@ namespace My.GIS
             public double Unused9, Unused10, Unused11, Unused12;
 
         }
+        [StructLayout(LayoutKind.Sequential, Pack = 4)]
+        struct RecordHeader
+        {
+            public int RecordNumber;
+            public int RecordLenght;
+            public int ShapeType;//it's a repeat the type in header file 
+            // because only one type in a shapefile
+        }
+        RecordHeader ReadRecordHeader(BinaryReader br)
+        {
+            byte[] buff = br.ReadBytes(Marshal.SizeOf(typeof(RecordHeader))); //i have a buff
+            GCHandle handle = GCHandle.Alloc(buff, GCHandleType.Pinned); //move buff to handle
+            RecordHeader header = (RecordHeader)Marshal.PtrToStructure
+                (handle.AddrOfPinnedObject(), typeof(RecordHeader));//move handle to header
+            handle.Free();
+            return header;
+
+        }
+        int FromBigToLittle(int bigValue)
+        {
+            byte[] bigBytes = new byte[4];
+            GCHandle handle = GCHandle.Alloc(bigBytes, GCHandleType.Pinned);
+            Marshal.StructureToPtr(bigValue, handle.AddrOfPinnedObject(), false);
+            handle.Free();
+            byte b2 = bigBytes[2];
+            byte b3 = bigBytes[3];
+            bigBytes[3] = bigBytes[0];
+            bigBytes[2] = bigBytes[1];
+            bigBytes[1] = b2;
+            bigBytes[0] = b3;
+            return BitConverter.ToInt32(bigBytes, 0);
+        }
+
         ShapefileHeader ReadShapfileHeader(BinaryReader br)
         {
             byte[] buff = br.ReadBytes(Marshal.SizeOf(typeof(ShapefileHeader))); //i have a buff
@@ -319,13 +362,56 @@ namespace My.GIS
             BinaryReader br = new BinaryReader(fsr); // BinaryReader Constructors has three overloads
             //one that takes only one paramter using UTF-8 encoding by default
             ShapefileHeader header = ReadShapfileHeader(br);
-            int shapeType = header.ShapeType;
-            GISMapExtent extent=new GISMapExtent()
-            
+            //int shapeType = header.ShapeType;
+            ShapeType shapeType = (ShapeType)Enum.Parse(typeof(ShapeType),
+                header.ShapeType.ToString());
+            GISMapExtent extent = new GISMapExtent(header.Xmax, header.Xmin, header.Ymax, header.Ymin);
+            while (br.PeekChar() != -1)
+            {
+                RecordHeader rh = ReadRecordHeader(br);
+                int RecordLength = FromBigToLittle(rh.RecordLenght) * 2 - 4;//some modfication 
+                //to better reflect the real length
+                byte[] RecordContent = br.ReadBytes(RecordLength);
+                if (shapeType == ShapeType.point)
+                {
+                    GISPoint point = ReadPoint(RecordContent);
+                }
 
-
+            }
+            br.Close();
+            fsr.Close();
+        }
+        public GISPoint ReadPoint(byte[] recordContent)
+        {
+            double x = BitConverter.ToDouble(recordContent, 0);
+            double y = BitConverter.ToDouble(recordContent, 8);
+            return new GISPoint(new GISVertex(x, y));
         }
 
+
+    }
+    class Layer
+    {
+
+        public string name;
+        public GISMapExtent Extent;
+        public bool DrawAttributeOrNot;
+        public int LabelIndex;
+        public ShapeType ShapeType;
+        List<GISFeature> features = new List<GISFeature>();
+        public Layer(string _name, ShapeType _shapetype, GISMapExtent _extent)
+        {
+            name = _name;
+            ShapeType = _shapetype;
+            Extent = _extent;
+        }
+        public void Draw(Graphics graphics, MapAndClientConverter view)
+        {
+            for (int i = 0; i < features.Count; i++)
+            {
+               
+            }
+        }
     }
 
 }

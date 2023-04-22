@@ -27,6 +27,13 @@ namespace My.GIS
         {
             return Math.Sqrt((x - gISVertex.x) * (x - gISVertex.x) + (y - gISVertex.y) * (y - gISVertex.y));
         }
+        public void CopyVertex(GISVertex vertex
+            )
+        {
+            this.x = vertex.x;
+            this.y = vertex.y;
+            // we can upgrade by add " this.z=vertex.z" and not have to mess the derived method
+        }
     }
     /*
      class GISPoint
@@ -148,8 +155,14 @@ namespace My.GIS
     }
     class GISMapExtent
     {
+        //map coordinates is the real coordinates
         public GISVertex mapBottomLeft;
         public GISVertex mapUpRight;
+        public void CopyExtent(GISMapExtent extent)
+        {
+            mapUpRight.CopyVertex(extent.mapUpRight);
+            mapBottomLeft.CopyVertex(extent.mapBottomLeft);
+        }
         public GISMapExtent(GISVertex bottomLeft, GISVertex upRight)
         {
             this.mapBottomLeft = bottomLeft;
@@ -235,7 +248,11 @@ namespace My.GIS
         int clientWindowHeight, clientWindowWidth;
         double mapW, mapH;
         double scaleX, scaleY;
-
+        public void UpdateExtent(GISMapExtent extent)
+        {
+            currentMapExtent.CopyExtent(extent);
+            Update(currentMapExtent, ClientWindowRectangle);
+        }
         public MapAndClientConverter(GISMapExtent extent, Rectangle clientWindowsRectangle)// current map extent and the client rectangle
         {
             Update(extent, clientWindowsRectangle);
@@ -285,7 +302,7 @@ namespace My.GIS
 
     }
 
-    class Shapfile
+    class ShapefileTools
     {
         [StructLayout(LayoutKind.Sequential, Pack = 4)]
         struct ShapefileHeader
@@ -366,7 +383,7 @@ namespace My.GIS
             ShapeType shapeType = (ShapeType)Enum.Parse(typeof(ShapeType),
                 header.ShapeType.ToString());
             GISMapExtent extent = new GISMapExtent(header.Xmax, header.Xmin, header.Ymax, header.Ymin);
-            Layer layer=new Layer(shapefileName,shapeType,extent);
+            Layer layer = new Layer(shapefileName, shapeType, extent);
             while (br.PeekChar() != -1)
             {
                 RecordHeader rh = ReadRecordHeader(br);
@@ -397,7 +414,7 @@ namespace My.GIS
 
     internal class Layer
     {
-        
+
         /// <naming_convention>
         /// if it's PascalCase, it's public member (of the class)
         /// if it's _camelCase, it's private or internal member (of the class)

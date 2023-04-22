@@ -6,6 +6,8 @@
 #google drive folder
 .tmp.driveupload/
 .tmp.drivedownload/
+#idea file
+.idea/
 # User-specific files
 *.rsuser
 *.suo

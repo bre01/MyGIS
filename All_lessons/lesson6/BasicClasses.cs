@@ -95,6 +95,7 @@ namespace My.GIS
         }
         public override void Draw(Graphics graphics, MapAndClientConverter view)
         {
+            //
             Point[] points = CalTool.ToScreenPoints(_vertexes, view);
             graphics.DrawLines(new Pen(Color.Red, 2), points);
 
@@ -233,15 +234,15 @@ namespace My.GIS
                 //max is up right
                 case GISMapActions.zoomin:
                     newMapMinX = ((minX() + maxX()) - width() / zoomFactor) / 2;
-                    newMapMinY = ((minY() + maxX()) - height() / zoomFactor) / 2;
+                    newMapMinY = ((minY() + maxY()) - height() / zoomFactor) / 2;
                     newMapMaxX = ((minX() + maxX()) + width() / zoomFactor) / 2;
                     newMapMaxY = ((minY() + maxY()) + height() / zoomFactor) / 2;
                     break;
                 case GISMapActions.zoomout:
                     newMapMinX = ((minX() + maxX()) - width() * zoomFactor) / 2;
                     newMapMinY = ((minY() + maxY()) - height() * zoomFactor) / 2;
-                    newMapMaxX = ((minX() + maxX()) + height() * zoomFactor) / 2;
-                    newMapMaxY = ((minX() + maxX()) + width() * zoomFactor) / 2;
+                    newMapMaxX = ((minX() + maxX()) + width() * zoomFactor) / 2;
+                    newMapMaxY = ((minY() + maxY()) + height() * zoomFactor) / 2;
                     break;
                 case GISMapActions.moveViewDown:
                     newMapMinY = minY() - height() * movingFactor;
@@ -278,16 +279,21 @@ namespace My.GIS
         int clientWindowHeight, clientWindowWidth;
         double mapW, mapH;
         double scaleX, scaleY;
-        public void UpdateExtent(GISMapExtent extent)
+        //I just don't understand the point of CopyExtent
+        //I just use the updateConverter Method, it update both two 
+        //parameter "extent" and "rectangle"
+        /*public void UpdateConverterMemberExtent(GISMapExtent extent)
         {
             _currentMapExtent.CopyExtent(extent);
-            Update(_currentMapExtent, _clientWindowRectangle);
-        }
+            UpdateConverter(_currentMapExtent, _clientWindowRectangle);
+        }*/
+
         public MapAndClientConverter(GISMapExtent extent, Rectangle clientWindowRectangle)// current map extent and the client rectangle
         {
-            Update(extent, clientWindowRectangle);
+            UpdateConverter(extent, clientWindowRectangle);
         }
-        public void Update(GISMapExtent extent, Rectangle rectangle)
+
+        public void UpdateConverter(GISMapExtent extent, Rectangle rectangle)
         {
             _currentMapExtent = extent;
             _clientWindowRectangle = rectangle;
@@ -316,7 +322,7 @@ namespace My.GIS
         public void ChangeView(GISMapActions mapAction)
         {
             _currentMapExtent.ChangeExtent(mapAction);
-            Update(_currentMapExtent, _clientWindowRectangle);
+            UpdateConverter(_currentMapExtent, _clientWindowRectangle);
         }
     }
     enum GISMapActions

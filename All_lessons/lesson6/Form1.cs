@@ -33,26 +33,38 @@ namespace lesson6
             _layer = shapefileTools.ReadShapefile(openFileDialog.FileName);
             _layer.DrawAttributeOrNot = false;
             MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
-            _converter.UpdateExtent(_layer.Extent);
-            UpdateMap();
+            UpdateAndDraw(_layer.Extent, ClientRectangle);
+            /*_converter.UpdateConverter(_layer.Extent,ClientRectangle);
+            DrawMap();*/
 
             /*ShapefileTools shapfileTools = new ShapefileTools();
             _layer = shapfileTools.ReadShapefile(@"C:\Users\bre\Downloads\LANDrop\GisData\chap10\thermal.shp");
             string fileName = null;
             _layer.DrawAttributeOrNot = false;
             MessageBox.Show("Fount" + _layer.FeatureCount() + "Points" + fileName);*/
-            
+
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            _converter.UpdateExtent(_layer.Extent);
-            UpdateMap();
+            //update map button clicked
+            /*_converter.UpdateConverter(_layer.Extent, ClientRectangle);
+            DrawMap();*/
+            UpdateAndDraw(_layer.Extent, ClientRectangle);
         }
-        private void UpdateMap()
+        private void UpdateAndDraw(GISMapExtent extent, Rectangle clientRectangle)
+        {
+
+            _converter.UpdateConverter(extent, clientRectangle);
+            DrawMap();
+        }
+
+
+        private void DrawMap()
         {
             Graphics graphics = CreateGraphics();
             graphics.FillRectangle(new SolidBrush(Color.Black), ClientRectangle);
+
             _layer.Draw(graphics, _converter);
         }
         private void map_button_Click(object sender, EventArgs e)
@@ -83,7 +95,7 @@ namespace lesson6
                 mapActions = GISMapActions.moveViewLeft;
             }
             _converter.ChangeView(mapActions);
-            this.UpdateMap();
+            this.DrawMap();
 
 
 
@@ -102,6 +114,11 @@ namespace lesson6
         private void label1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void Form1_SizeChanged(object sender, EventArgs e)
+        {
+            UpdateAndDraw(_layer.Extent,ClientRectangle);
         }
     }
 

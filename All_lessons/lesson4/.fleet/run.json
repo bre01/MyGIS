@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "type": "dotnet",
+            "name": "Dotnet configuration",
+            "projectPath": "lesson4.csproj",
+            "exePath": "",
+            "args": [],
+        },
+        
+    ]
+}

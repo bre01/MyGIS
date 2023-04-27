@@ -2,8 +2,10 @@
 
 the defuatl modidier for a thing is the most restricted it can be
 for example
-field is private
-and class is internal 
+
+***field is private***
+
+***class is internal***
 
 ## when it cames to naming conventions
 
@@ -20,6 +22,8 @@ pascal for property
 
 
 --------- 
+new format
+---------
 private member  _camelCase
 
 public member (*fields, property,events,methods*)  **PascalCase**
@@ -32,6 +36,6 @@ public member (*fields, property,events,methods*)  **PascalCase**
 
 *private field,internal field* **_camelCase**
 
-*static private field,internal field **s_camelCase**
+*static private field,static internal field* **s_camelCase**
 
 

@@ -274,7 +274,7 @@ namespace My.GIS
         public Point ToScreenPoint(GISVertex vertex)
         {
             double screenX = (vertex.x - mapMinX) / scaleX;
-            double screenY = clientWindowHeight - (vertex.x - mapMinY) / scaleY;
+            double screenY = clientWindowHeight - (vertex.y - mapMinY) / scaleY;
             return new Point((int)screenX, (int)screenY);
         }
         public GISVertex ToMapVertex(Point point)

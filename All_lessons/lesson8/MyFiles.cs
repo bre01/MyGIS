@@ -72,29 +72,32 @@ namespace My.GIS
                     binaryWriter.Write((byte)attribute.GetValue(i));
                 else if (type.ToString() == "System.Char")
                     binaryWriter.Write((char)attribute.GetValue(i));
-                else if (attribute.ToString() == "System.Deciaml")
+                else if (type.ToString() == "System.Deciaml")
                     binaryWriter.Write((decimal)attribute.GetValue(i));
-                else if (attribute.ToString() == "System.Double")
+                else if (type.ToString() == "System.Double")
                     binaryWriter.Write((double)attribute.GetValue(i));
-                else if (attribute.ToString() == "System.Single")
+                else if (type.ToString() == "System.Single")
                     binaryWriter.Write((float)attribute.GetValue(i));
-                else if (attribute.ToString() == "System.Int32")
+                else if (type.ToString() == "System.Int32")
                     binaryWriter.Write((int)attribute.GetValue(i));
-                else if (attribute.ToString() == "System.Int64")
+                else if (type.ToString() == "System.Int64")
                     binaryWriter.Write((long)attribute.GetValue(i));
-                else if (attribute.ToString() == "System.UInt16")
+                else if (type.ToString() == "System.UInt16")
                     binaryWriter.Write((ushort)attribute.GetValue(i));
-                else if (attribute.ToString() == "System.UInt32")
+                else if (type.ToString() == "System.UInt32")
                     binaryWriter.Write((uint)attribute.GetValue(i));
-                else if (attribute.ToString() == "System.UInt64")
+                else if (type.ToString() == "System.UInt64")
                     binaryWriter.Write((ulong)attribute.GetValue(i));
-                else if (attribute.ToString() == "System.SByte")
+                else if (type.ToString() == "System.SByte")
                     binaryWriter.Write((sbyte)attribute.GetValue(i));
-                else if (attribute.ToString() == "System.Int16")
+                else if (type.ToString() == "System.Int16")
                     binaryWriter.Write((short)attribute.GetValue(i));
-                else if (attribute.ToString() == "System.String")
+                else if (type.ToString() == "System.String")
+                {
+                  
                     //binaryWriter.Write((string)attribute.GetValue(i));
                     CalTool.WriteString((string)attribute.GetValue(i), binaryWriter);
+                }
 
             }
         }
@@ -158,7 +161,7 @@ namespace My.GIS
                     attribute.AddValue(br.ReadChar());
                 else if (type.ToString() == "System.Decimal")
                     attribute.AddValue(br.ReadDecimal());
-                else if (type.ToString() == "System.Dobule")
+                else if (type.ToString() == "System.Double")
                     attribute.AddValue(br.ReadDouble());
                 else if (type.ToString() == "System.Single")
                     attribute.AddValue(br.ReadSingle());

@@ -1,0 +1,84 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using Microsoft.Win32;
+using My.GIS;
+using System.Runtime.Remoting.Channels;
+
+namespace Wpf8F
+{
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        Layer _layer;
+        public Rectangle ClientRectangle = new Rectangle();
+        MapAndClientConverter _converter = null;
+        public MainWindow()
+        {
+            InitializeComponent();
+            ClientRectangle.Height = ActualHeight;
+            ClientRectangle.Width = ActualWidth;
+        }
+        private void UpdateClientSize()
+        {
+            ClientRectangle.Width = ActualWidth;
+            ClientRectangle.Height = ActualHeight;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog(); openFileDialog.Filter = "Shapefile file |*.shp";
+            openFileDialog.RestoreDirectory = false;
+            openFileDialog.FilterIndex = 1;
+            openFileDialog.Multiselect = false;
+            if (openFileDialog.ShowDialog() != DialogResult.HasValue) return;
+            ShapefileTools shapefileTools = new ShapefileTools();
+            _layer = shapefileTools.ReadShapefile(openFileDialog.FileName);
+            _layer.DrawAttributeOrNot = false;
+            MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
+
+            UpdateAndDraw(_layer.Extent, ClientRectangle);
+            shape_box.Text = _layer.ShapeType.ToString();
+            x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.Extent.minX(), _layer.Extent.maxX());
+            y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.Extent.minY(), _layer.Extent.maxY());
+
+        }
+        private void UpdateAndDraw(GISMapExtent extent, Rectangle clientRectangle)
+        {
+            _converter.UpdateConverter(extent, clientRectangle);
+            DrawMap();
+
+        }
+        private void DrawMap()
+        {
+
+        }
+        private Rect GetBoundingBox(FrameworkElement element, Window containerWindow)
+        {
+            GeneralTransform transform = element.TransformToAncestor(containerWindow);
+            Point topLeft = transform.Transform(new Point(0, 0));
+            Point bottomRight = transform.Transform(new Point(element.ActualWidth, element.ActualHeight));
+            return new Rect(topLeft, bottomRight);
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateClientSize();
+            UpdateAndDraw(_layer.Extent, ClientRectangle);
+        }
+    }
+}

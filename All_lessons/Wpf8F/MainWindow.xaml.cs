@@ -30,14 +30,14 @@ namespace Wpf8F
         public MainWindow()
         {
             InitializeComponent();
-            ClientRectangle.Height = this.MapGrid.ActualHeight;
-            ClientRectangle.Width = this.MapGrid.ActualWidth;
+            ClientRectangle.Height = this.MapCavans.ActualHeight;
+            ClientRectangle.Width = this.MapCavans.ActualWidth;
             _converter = new MapAndClientConverter(new GISMapExtent(new GISVertex(0, 0), new GISVertex(100, 100)), ClientRectangle);
         }
         private void UpdateClientSize()
         {
-            ClientRectangle.Width = this.MapGrid.ActualWidth;
-            ClientRectangle.Height = this.MapGrid.ActualHeight;
+            ClientRectangle.Width = this.MapCavans.ActualWidth;
+            ClientRectangle.Height = this.MapCavans.ActualHeight;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -61,12 +61,13 @@ namespace Wpf8F
         private void UpdateAndDraw(GISMapExtent extent, Rectangle clientRectangle)
         {
             _converter.UpdateConverter(extent, clientRectangle);
+            MapCavans.Children.Clear();
             DrawMap();
 
         }
         private void DrawMap()
         {
-            _layer.Draw(MapGrid, _converter);
+            _layer.Draw(MapCavans, _converter);
 
         }
         private Rect GetBoundingBox(FrameworkElement element, Window containerWindow)
@@ -89,6 +90,18 @@ namespace Wpf8F
         private void MenuItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
 
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            AttributeWindow atttibuteWindow = new AttributeWindow(_layer);
+            atttibuteWindow.Title = "Attributes table";
+            atttibuteWindow.Show();
         }
     }
 }

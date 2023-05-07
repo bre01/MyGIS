@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 //using System.Windows.Forms;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace My.GIS
 {
@@ -86,7 +87,7 @@ namespace My.GIS
             centroid = vertext;
             mapExtent = new GISMapExtent(vertext, vertext);
         }
-        public override void Draw(Grid grid, MapAndClientConverter view)
+        public override void Draw(Canvas canvas, MapAndClientConverter view)
         {
             Point screenPoint = view.ToScreenPoint(centroid);
 
@@ -98,13 +99,15 @@ namespace My.GIS
             point.VerticalAlignment = VerticalAlignment.Top;
             point.Width = 6;
             point.Height = 6;
-            point.Margin = new Thickness
-            {
-                Left = screenPoint.X - 3,
-                Top = screenPoint.Y - 3
+            //point.Margin = new Thickness
+            //{
+            double Left = screenPoint.X - 3;
+            double Top = screenPoint.Y - 3;
 
-            };
-            grid.Children.Add(point);
+            //};
+            canvas.Children.Add(point);
+            Canvas.SetLeft(point, Left);
+            Canvas.SetTop(point, Top);
 
 
         }
@@ -128,25 +131,23 @@ namespace My.GIS
             mapExtent = CalTool.CalculateExtent(Vertexes);
             Length = CalTool.CalculateLength(Vertexes);
         }
-        public override void Draw(Grid mygrid, MapAndClientConverter view)
+        public override void Draw(Canvas canvas, MapAndClientConverter view)
 
         {
 
-            //Point[] points = CalTool.ToScreenPoints(Vertexes, view);
+            Point[] points = CalTool.ToScreenPoints(Vertexes, view);
             //graphics.DrawLines(new Pen(Color.Red, 2), points);
             //foreach(GISVertex vertex in Vertexes)
-            List<Line> lines = new List<Line>();
-            for (int i = 0; i < Vertexes.Count - 1; i++)
+            for (int i = 0; i < points.Length - 1; i++)
             {
                 Line line = new Line();
                 line.Stroke = System.Windows.Media.Brushes.LightBlue;
-                line.X1 = Vertexes[i].x;
-                line.X2 = Vertexes[i + 1].x;
-                line.Y1 = Vertexes[i].y;
-                line.Y2 = Vertexes[i + 1].y;
+                line.X1 = points[i].X;
+                line.X2 = points[i + 1].X;
+                line.Y1 = points[i].Y;
+                line.Y2 = points[i + 1].Y;
                 line.StrokeThickness = 2;
-                lines.Add(line);
-                mygrid.Children.Add(line);
+                canvas.Children.Add(line);
             }
 
         }
@@ -171,11 +172,20 @@ namespace My.GIS
             Area = CalTool.CalculateArea(Vertexes);
         }
 
-        public override void Draw(Grid grid, MapAndClientConverter view)
+        public override void Draw(Canvas canvas, MapAndClientConverter view)
         {
-            /*Point[] points = CalTool.ToScreenPoints(Vertexes, view);
-            graphics.FillPolygon(new SolidBrush(Color.Yellow), points);
-            graphics.DrawPolygon(new Pen(Color.White, 2), points);*/
+            Point[] points = CalTool.ToScreenPoints(Vertexes, view);
+            //graphics.FillPolygon(new SolidBrush(Color.Yellow), points);
+            //graphics.DrawPolygon(new Pen(Color.White, 2), points);*/
+            Polygon polygon = new Polygon();
+            polygon.Stroke = Brushes.Pink;
+            polygon.Fill= Brushes.Pink;
+            foreach (Point point in points)
+            {
+                polygon.Points.Add(point);
+            }
+            canvas.Children.Add(polygon);
+
 
         }
     }
@@ -196,9 +206,9 @@ namespace My.GIS
             spatialPart = spatial;
             attributePart = attribute;
         }
-        public void Draw(Grid grid, MapAndClientConverter view, bool drawAttributeOrNot, int index)
+        public void Draw(Canvas canvas, MapAndClientConverter view, bool drawAttributeOrNot, int index)
         {
-            spatialPart.Draw(grid, view);
+            spatialPart.Draw(canvas, view);
             if (drawAttributeOrNot)
             {
                 //attributePart.Draw(graphics, view, spatialPart.centroid, index);
@@ -238,7 +248,7 @@ namespace My.GIS
         public GISVertex centroid;
         public GISMapExtent mapExtent;
         //public abstract void Draw(Graphics graphics, MapAndClientConverter view);
-        public abstract void Draw(Grid gird, MapAndClientConverter converter);
+        public abstract void Draw(Canvas canvas, MapAndClientConverter converter);
     }
     public class GISMapExtent
     {
@@ -614,11 +624,11 @@ namespace My.GIS
             Extent = extent;
             Fields = fields;
         }
-        public void Draw(Grid grid, MapAndClientConverter view)
+        public void Draw(Canvas canvas, MapAndClientConverter view)
         {
             for (int i = 0; i < _features.Count; i++)
             {
-                _features[i].Draw(grid, view, this.DrawAttributeOrNot, this.LabelIndex);
+                _features[i].Draw(canvas, view, this.DrawAttributeOrNot, this.LabelIndex);
             }
         }
         public void AddFeature(GISFeature feature)

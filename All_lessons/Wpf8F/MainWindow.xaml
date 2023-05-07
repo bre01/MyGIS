@@ -6,16 +6,26 @@
         xmlns:local="clr-namespace:Wpf8F"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" SizeChanged="Window_SizeChanged">
-    <Grid>
+    <Grid x:Name="BigGrid">
+
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="49*"/>
-            <ColumnDefinition Width="351*"/>
+            <ColumnDefinition Width="173*"/>
         </Grid.ColumnDefinitions>
-        <Button Content="Open file" HorizontalAlignment="Left" Margin="26,26,0,0" VerticalAlignment="Top" Click="Button_Click"/>
-        <Button Content="Save file" HorizontalAlignment="Left" Margin="26,82,0,0" VerticalAlignment="Top" Width="52"/>
-        <TextBox x:Name="shape_box" HorizontalAlignment="Left" Margin="37,26,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
-        <TextBox x:Name="x_extent_box" HorizontalAlignment="Left" Margin="67,67,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
-        <TextBox x:Name="y_extent_box" HorizontalAlignment="Left" Margin="67,102,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <Menu Name="menu1" Height="22" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <MenuItem >
+            </MenuItem>
+        </Menu>
+        <Button Content="Open file" HorizontalAlignment="Left" Margin="26,42,0,0" VerticalAlignment="Top" Click="Button_Click" Height="20" Width="52"/>
+        <Button Content="Save file" HorizontalAlignment="Left" Margin="26,82,0,0" VerticalAlignment="Top" Width="52" Height="20"/>
+        <TextBox x:Name="shape_box" HorizontalAlignment="Left" Margin="26,121,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="78" Height="18" RenderTransformOrigin="1.495,1.767"/>
+        <TextBox x:Name="x_extent_box" HorizontalAlignment="Left" Margin="26,174,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Height="43" RenderTransformOrigin="-1.53,6.533"/>
+        <TextBox x:Name="y_extent_box" HorizontalAlignment="Left" Margin="26,244,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Height="51" RenderTransformOrigin="-1.384,8.488"/>
+        <Grid x:Name="MapGrid" Height="NaN" Margin="146,27,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="299*"/>
+            </Grid.ColumnDefinitions>
+
+        </Grid>
 
     </Grid>
 </Window>

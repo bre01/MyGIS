@@ -30,13 +30,14 @@ namespace Wpf8F
         public MainWindow()
         {
             InitializeComponent();
-            ClientRectangle.Height = ActualHeight;
-            ClientRectangle.Width = ActualWidth;
+            ClientRectangle.Height = this.MapGrid.ActualHeight;
+            ClientRectangle.Width = this.MapGrid.ActualWidth;
+            _converter = new MapAndClientConverter(new GISMapExtent(new GISVertex(0, 0), new GISVertex(100, 100)), ClientRectangle);
         }
         private void UpdateClientSize()
         {
-            ClientRectangle.Width = ActualWidth;
-            ClientRectangle.Height = ActualHeight;
+            ClientRectangle.Width = this.MapGrid.ActualWidth;
+            ClientRectangle.Height = this.MapGrid.ActualHeight;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -45,7 +46,7 @@ namespace Wpf8F
             openFileDialog.RestoreDirectory = false;
             openFileDialog.FilterIndex = 1;
             openFileDialog.Multiselect = false;
-            if (openFileDialog.ShowDialog() != DialogResult.HasValue) return;
+            openFileDialog.ShowDialog();
             ShapefileTools shapefileTools = new ShapefileTools();
             _layer = shapefileTools.ReadShapefile(openFileDialog.FileName);
             _layer.DrawAttributeOrNot = false;
@@ -65,6 +66,7 @@ namespace Wpf8F
         }
         private void DrawMap()
         {
+            _layer.Draw(MapGrid, _converter);
 
         }
         private Rect GetBoundingBox(FrameworkElement element, Window containerWindow)
@@ -78,7 +80,15 @@ namespace Wpf8F
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdateClientSize();
-            UpdateAndDraw(_layer.Extent, ClientRectangle);
+            if (_layer != null)
+            {
+                UpdateAndDraw(_layer.Extent, ClientRectangle);
+            }
+        }
+
+        private void MenuItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
         }
     }
 }

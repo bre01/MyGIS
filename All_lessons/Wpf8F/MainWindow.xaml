@@ -11,19 +11,38 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="173*"/>
         </Grid.ColumnDefinitions>
-        <Menu Name="menu1" Height="22" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <MenuItem >
+        <Menu Name="menu1" Height="22" Width="177" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
+            <Menu.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="-0.206"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Menu.RenderTransform>
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open" Click="openFile_Click"></MenuItem>
+                <MenuItem Header="_Save As .qu" Click="Save_qu_Click"></MenuItem>
+                <MenuItem Header="_Open .qu" Click="Read_qu_Click"></MenuItem>
             </MenuItem>
+            <MenuItem Header="_View">
+                <MenuItem Header="Zoom in"></MenuItem>
+                <MenuItem Header="Zoom out"></MenuItem>
+                <MenuItem Header="Move right"></MenuItem>
+                <MenuItem Header="Move left"></MenuItem>
+                <MenuItem Header="Move down"></MenuItem>
+                <MenuItem Header="Move up"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Edit"></MenuItem>
+            <MenuItem Header="_Attributes" Click="Attributes_Click"></MenuItem>
+
         </Menu>
-        <Button Content="Open file" HorizontalAlignment="Left" Margin="26,42,0,0" VerticalAlignment="Top" Click="Button_Click" Height="20" Width="52"/>
-        <Button Content="Save file" HorizontalAlignment="Left" Margin="26,82,0,0" VerticalAlignment="Top" Width="52" Height="20" Click="Button_Click_1"/>
-        <TextBox x:Name="shape_box" HorizontalAlignment="Left" Margin="26,121,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="78" Height="18" RenderTransformOrigin="1.495,1.767"/>
-        <TextBox x:Name="x_extent_box" HorizontalAlignment="Left" Margin="26,174,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Height="43" RenderTransformOrigin="-1.53,6.533"/>
+        <TextBox x:Name="shape_box" HorizontalAlignment="Left" Margin="26,151,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="78" Height="18" RenderTransformOrigin="1.495,1.767"/>
+        <TextBox x:Name="x_extent_box" HorizontalAlignment="Left" Margin="26,184,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Height="43" RenderTransformOrigin="-1.53,6.533"/>
         <TextBox x:Name="y_extent_box" HorizontalAlignment="Left" Margin="26,244,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Height="51" RenderTransformOrigin="-1.384,8.488"/>
         <Canvas Name="MapCavans" HorizontalAlignment="Left" Width="595" Margin="205,10,0,-10">
 
         </Canvas>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="100,42,0,0" VerticalAlignment="Top" Width="55" Click="Button_Click_2"/>
 
     </Grid>
 </Window>

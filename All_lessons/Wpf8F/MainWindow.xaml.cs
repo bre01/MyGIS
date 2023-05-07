@@ -40,7 +40,7 @@ namespace Wpf8F
             ClientRectangle.Height = this.MapCavans.ActualHeight;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void openFile_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog(); openFileDialog.Filter = "Shapefile file |*.shp";
             openFileDialog.RestoreDirectory = false;
@@ -92,16 +92,42 @@ namespace Wpf8F
 
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void Save_qu_Click(object sender, RoutedEventArgs e)
         {
+            SaveFileDialog dialog = new SaveFileDialog();
+            if (dialog.ShowDialog() == DialogResult.HasValue) return;
+            string fileName = dialog.FileName;
+            MyFiles.WriteFile(_layer, fileName);
+            MessageBox.Show("done");
 
         }
 
-        private void Button_Click_2(object sender, RoutedEventArgs e)
+        private void Attributes_Click(object sender, RoutedEventArgs e)
         {
-            AttributeWindow atttibuteWindow = new AttributeWindow(_layer);
-            atttibuteWindow.Title = "Attributes table";
-            atttibuteWindow.Show();
+            try
+            {
+                AttributeWindow atttibuteWindow = new AttributeWindow(_layer);
+                atttibuteWindow.Title = "Attributes table";
+                atttibuteWindow.Show();
+
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show("please open a file");
+            }
         }
+
+        private void Read_qu_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.ShowDialog();
+            string fileName = dialog.FileName;
+            _layer = MyFiles.ReadFile(fileName);
+            MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
+            _converter.UpdateConverter(_layer.Extent, ClientRectangle);
+            DrawMap();
+        }
+
     }
 }

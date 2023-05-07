@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 
 namespace lesson8
 {
@@ -34,6 +35,10 @@ namespace lesson8
             _layer.DrawAttributeOrNot = false;
             MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
             UpdateAndDraw(_layer.Extent, ClientRectangle);
+            shape_box.Text = _layer.ShapeType.ToString();
+            x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.Extent.minX(), _layer.Extent.maxX());
+            y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.Extent.minY(), _layer.Extent.maxY());
+
             /*_converter.UpdateConverter(_layer.Extent,ClientRectangle);
             DrawMap();*/
 
@@ -118,8 +123,8 @@ namespace lesson8
 
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
-            if(_layer!=null)
-            UpdateAndDraw(_layer.Extent, ClientRectangle);
+            if (_layer != null)
+                UpdateAndDraw(_layer.Extent, ClientRectangle);
         }
 
         private void button9_Click(object sender, EventArgs e)
@@ -131,16 +136,32 @@ namespace lesson8
 
         private void button10_Click(object sender, EventArgs e)
         {
-            MyFiles.WriteFile(_layer, @"C:\Users\bre\Work\GisTemp\a.mygis");
+            SaveFileDialog dialog = new SaveFileDialog();
+            if (dialog.ShowDialog() != DialogResult.OK) return;
+            string fileName = dialog.FileName;
+            MyFiles.WriteFile(_layer, fileName);
             MessageBox.Show("done");
         }
 
         private void button11_Click(object sender, EventArgs e)
         {
-            _layer = MyFiles.ReadFile(@"C:\Users\bre\Work\GisTemp\a.mygis");
+            OpenFileDialog dialog = new OpenFileDialog();
+            if (dialog.ShowDialog() != DialogResult.OK) return;
+            string fileName = dialog.FileName;
+            _layer = MyFiles.ReadFile(fileName);
             MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
             _converter.UpdateConverter(_layer.Extent, ClientRectangle);
             DrawMap();
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
 
         }
     }

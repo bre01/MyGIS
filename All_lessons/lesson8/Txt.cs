@@ -1,19 +1,17 @@
-﻿using Microsoft.SqlServer.Server;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
 
 namespace My.GIS
 {
-    public class MyFiles
+    public class Txt
 
     {
 
@@ -45,32 +43,6 @@ namespace My.GIS
             WriteFeatures(layer, binaryWriter);
             binaryWriter.Close();
             fileStream.Close();
-        }
-        public static void WriteTxt(Layer layer, string filename)
-        {
-            //string f = "    ";
-            //string header_key = "Layer Name" + f + "Xmin" + f + "Y min" + f + "X max" + f + "Y max" + "feature shape" + f + "features" + f + "fileds";
-            //string header_value = string.Format("{ 0,-20}{1,-20}{2,-20}{3,-20}{4,-20}{5,-20}{6,-20}{7,-20}",
-            //    layer.Name, layer.Extent.maxX(), layer.Extent.minX(), layer.Extent.maxY(), layer.Extent.minY()
-            //    , layer.ShapeType, layer.FeatureCount(), layer.Fields.Count);
-            //string
-
-            using (StreamWriter streamWriter = new StreamWriter(filename))
-            {
-                WriteHeaderTxt(layer, streamWriter);
-                WriteLayerNameTxt(layer.Name, streamWriter);
-                WriteFieldsTxt(layer.Fields, streamWriter);
-                WriteFeaturesTxt(layer, streamWriter);
-            }
-        }
-        public static void WriteHeaderTxt(Layer layer, StreamWriter streamWriter)
-        {
-            streamWriter.WriteLine(layer.Extent.minX());
-            streamWriter.WriteLine(layer.Extent.minY());
-            streamWriter.WriteLine(layer.Extent.maxX());
-            streamWriter.WriteLine(layer.Extent.maxY());
-            streamWriter.WriteLine(layer.FeatureCount());
-            streamWriter.
         }
         static void WriteFields(List<GISField> fields, BinaryWriter binaryWriter)
         {

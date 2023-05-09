@@ -139,7 +139,7 @@ namespace lesson8
             SaveFileDialog dialog = new SaveFileDialog();
             if (dialog.ShowDialog() != DialogResult.OK) return;
             string fileName = dialog.FileName;
-            MyFiles.WriteTxt(_layer, fileName);
+            Txt.WriteTxt(_layer, fileName);
             MessageBox.Show("done");
         }
 
@@ -148,7 +148,7 @@ namespace lesson8
             OpenFileDialog dialog = new OpenFileDialog();
             if (dialog.ShowDialog() != DialogResult.OK) return;
             string fileName = dialog.FileName;
-            _layer = MyFiles.ReadTxt(fileName);
+            _layer = Txt.ReadTxt(fileName);
             MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
             UpdateAndDraw(_layer.Extent, ClientRectangle);
             shape_box.Text = _layer.ShapeType.ToString();

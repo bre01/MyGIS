@@ -148,10 +148,12 @@ namespace lesson8
             OpenFileDialog dialog = new OpenFileDialog();
             if (dialog.ShowDialog() != DialogResult.OK) return;
             string fileName = dialog.FileName;
-            _layer = MyFiles.ReadFile(fileName);
+            _layer = MyFiles.ReadTxt(fileName);
             MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
-            _converter.UpdateConverter(_layer.Extent, ClientRectangle);
-            DrawMap();
+            UpdateAndDraw(_layer.Extent, ClientRectangle);
+            shape_box.Text = _layer.ShapeType.ToString();
+            x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.Extent.minX(), _layer.Extent.maxX());
+            y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.Extent.minY(), _layer.Extent.maxY());
 
         }
 

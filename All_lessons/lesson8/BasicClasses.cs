@@ -30,6 +30,11 @@ namespace My.GIS
             x = br.ReadDouble();
             y = br.ReadDouble();
         }
+        public GISVertex(StreamReader sr)
+        {
+            x = Convert.ToDouble(sr.ReadLine());
+            y = Convert.ToDouble(sr.ReadLine());
+        }
 
         public double GetDistanceThisVToV(GISVertex gISVertex)
         {

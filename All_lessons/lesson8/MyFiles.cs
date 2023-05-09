@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Windows.Forms;
 
 namespace My.GIS
 {
@@ -19,7 +19,7 @@ namespace My.GIS
     {
 
         [StructLayout(LayoutKind.Sequential, Pack = 4)]
-        struct MyFileHeader
+        public struct MyFileHeader
         {
             public double MinX, MinY, MaxX, MaxY;
             public int FeatureCount, ShapeType, FieldCount;
@@ -82,8 +82,8 @@ namespace My.GIS
         {
             for (int i = 0; i < fields.Count; i++)
             {
-                sw.WriteLine(fields[i].Name);
                 sw.WriteLine(fields[i].DataType);
+                sw.WriteLine(fields[i].Name);
             }
         }
         public static void WriteFeaturesTxt(Layer layer, StreamWriter sw)
@@ -140,7 +140,7 @@ namespace My.GIS
         }
         static void WriteMultipleVertexes(List<GISVertex> vertexes, StreamWriter sw)
         {
-            sw.Write(vertexes.Count());
+            sw.WriteLine(vertexes.Count());
             for (int vertexIndex = 0; vertexIndex < vertexes.Count(); vertexIndex++)
             {
                 vertexes[vertexIndex].WriteVertex(sw);
@@ -240,6 +240,16 @@ namespace My.GIS
             }
             return vertexes;
         }
+        static List<GISVertex> ReadMultipleVertexes(StreamReader sr)
+        {
+            List<GISVertex> vertexes = new List<GISVertex>();
+            int vertexCount = Convert.ToInt32(sr.ReadLine());
+            for (int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++)
+            {
+                vertexes.Add(new GISVertex(sr));
+            }
+            return vertexes;
+        }
         static GISAttribute ReadAttributes(List<GISField> fields, BinaryReader br)
         {
             GISAttribute attribute = new GISAttribute();
@@ -279,6 +289,18 @@ namespace My.GIS
             return attribute;
 
         }
+        static GISAttribute ReadAttributes(List<GISField> fields, StreamReader sr)
+        {
+            GISAttribute attribute = new GISAttribute();
+            for (int i = 0; i < fields.Count; i++)
+            {
+                Type type = fields[i].DataType;
+                //attribute.AddValue(CastObject < type> (sr.ReadLine()));
+                attribute.AddValue(Convert.ChangeType(sr.ReadLine(), type));
+            }
+            return attribute;
+        }
+
         static void ReadFeatures(Layer layer, BinaryReader br, int featureCount)
         {
             for (int featureIndex = 0; featureIndex < featureCount; featureIndex++)
@@ -300,6 +322,10 @@ namespace My.GIS
                 layer.AddFeature(feature);
             }
         }
+        public static T CastObject<T>(object input)
+        {
+            return (T)Convert.ChangeType(input, typeof(T));
+        }
         public static Layer ReadFile(string filename)
         {
             FileStream fileStream = new FileStream(filename, FileMode.Open);
@@ -315,27 +341,83 @@ namespace My.GIS
             fileStream.Close();
             return layer;
         }
-        //public static Layer ReadTxt(string filename)
-        //{
-        //    using (StreamReader sr = new StreamReader(filename))
-        //    {
-        //        ReadHeaderTxt(layer, streamWriter);
-        //        ReadLayerNameTxt(layer.Name, streamWriter);
-        //        ReadFieldsTxt(layer.Fields, streamWriter);
-        //        ReadFeaturesTxt(layer, streamWriter);
-                
+        public static Layer ReadTxt(string filename)
+        {
+            using (StreamReader sr = new StreamReader(filename))
+            {
+                MyFileHeader header = ReadHeaderTxt(sr);
+                string name = ReadLayerNameTxt(sr);
 
-        //        layer.Extent = new GISMapExtent(Convert.ToDouble(sr.ReadLine()), Convert.ToDouble(sr.ReadLine()), Convert.ToDouble(sr.ReadLine()), Convert.ToDouble(sr.ReadLine()));
-        //        int featureCount = Convert.ToInt32(sr.ReadLine());
-        //        object reulst;
-        //        layer.ShapeType = (S)Convert.ToInt32(sr.ReadLine());
-        //        layer.FeatureCount = Convert.ToInt32(sr.ReadLine());
-        //        Layer layer = new Layer();
+                List<GISField> fields = ReadFieldsTxt(sr, header.FieldCount);
+                S shapeType = (S)Enum.Parse(typeof(S), header.ShapeType.ToString());
+                Layer layer = new Layer(name, shapeType,
+                    new GISMapExtent(header.MinX, header.MaxX, header.MinY, header.MaxY),
+                    fields);
 
-        //    }
+                ReadFeaturesTxt(layer, sr, header.FeatureCount);
 
-        //}
+
+                //layer.Extent = new GISMapExtent(Convert.ToDouble(sr.ReadLine()), Convert.ToDouble(sr.ReadLine()), Convert.ToDouble(sr.ReadLine()), Convert.ToDouble(sr.ReadLine()));
+                //int featureCount = Convert.ToInt32(sr.ReadLine());
+                //object reulst;
+                //layer.ShapeType = (S)Convert.ToInt32(sr.ReadLine());
+                //layer.FeatureCount = Convert.ToInt32(sr.ReadLine());
+                //Layer layer = new Layer();
+                return layer;
+
+            }
+
+        }
+        public static MyFileHeader ReadHeaderTxt(StreamReader sr)
+        {
+            MyFileHeader header = new MyFileHeader();
+            header.MinX = (Convert.ToDouble(sr.ReadLine()));
+            header.MaxX = (Convert.ToDouble(sr.ReadLine()));
+            header.MinY = (Convert.ToDouble(sr.ReadLine()));
+            header.MaxY = (Convert.ToDouble(sr.ReadLine()));
+            header.FeatureCount = Convert.ToInt32(sr.ReadLine());
+            header.ShapeType = Convert.ToInt32(sr.ReadLine());
+            header.FieldCount = Convert.ToInt32(sr.ReadLine());
+            return header;
+        }
+        public static String ReadLayerNameTxt(StreamReader sr)
+        {
+            return (sr.ReadLine());
+        }
+        public static List<GISField> ReadFieldsTxt(StreamReader sr, int FieldCount)
+        {
+            List<GISField> fields = new List<GISField>();
+            for (int fieldIndex = 0; fieldIndex < FieldCount; fieldIndex++)
+            {
+                fields.Add(new GISField(Type.GetType(sr.ReadLine()), sr.ReadLine()));
+            }
+            return fields;
+        }
+        public static void ReadFeaturesTxt(Layer layer, StreamReader sr, int featureCount)
+        // objects are by default passed by ref  ,so layer is passed by ref
+        {
+            for (int featureIndex = 0; featureIndex < featureCount; featureIndex++)
+            {
+                GISFeature feature = new GISFeature(null, null);
+                if (layer.ShapeType == S.Point)
+                {
+                    feature.spatialPart = new GISPoint(new GISVertex(sr));
+                }
+                else if (layer.ShapeType == S.Line)
+                {
+                    feature.spatialPart = new GISLine(ReadMultipleVertexes(sr));
+                }
+                else if (layer.ShapeType == S.Polygon)
+                {
+                    feature.spatialPart = new GISPolygon(ReadMultipleVertexes(sr));
+                }
+                feature.attributePart = ReadAttributes(layer.Fields, sr);
+                layer.AddFeature(feature);
+            }
+
+
+
+        }
 
     }
-
 }

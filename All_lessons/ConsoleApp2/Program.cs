@@ -25,11 +25,14 @@ namespace ConsoleApp2
             "text from a custom backing store using the same " +
             "APIs you would use for a string or a stream.";
             StreamWriter streamWriter = new StreamWriter(fileName);
-            streamWriter.Write((double)343.3243);
-             
+            streamWriter.WriteLine((double)343.3243);
+            streamWriter.WriteLine(typeof(double));
+
+
             streamWriter.Close();
             StreamReader reader = new StreamReader(fileName);
             Console.WriteLine(Convert.ToDouble(reader.ReadLine()));
+            Console.WriteLine(Type.GetType(reader.ReadLine()));
             //string f = "    ";
             //string feature = "Layer Name" + f + "Xmin" + f + "Y min" + f + "X max" + f + "Y max" + "feature shape" + f + "features" + f + "fileds";
             //string feature_value = string.Format("{0,-35}{1,-20}", "hello", "what");

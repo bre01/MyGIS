@@ -139,7 +139,7 @@ namespace lesson8
             SaveFileDialog dialog = new SaveFileDialog();
             if (dialog.ShowDialog() != DialogResult.OK) return;
             string fileName = dialog.FileName;
-            MyFiles.WriteFile(_layer, fileName);
+            MyFiles.WriteTxt(_layer, fileName);
             MessageBox.Show("done");
         }
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.SqlServer.Server;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -66,12 +67,60 @@ namespace My.GIS
         public static void WriteHeaderTxt(Layer layer, StreamWriter streamWriter)
         {
             streamWriter.WriteLine(layer.Extent.minX());
-            streamWriter.WriteLine(layer.Extent.minY());
             streamWriter.WriteLine(layer.Extent.maxX());
+            streamWriter.WriteLine(layer.Extent.minY());
             streamWriter.WriteLine(layer.Extent.maxY());
             streamWriter.WriteLine(layer.FeatureCount());
-            streamWriter.
+            streamWriter.WriteLine((int)layer.ShapeType);
+            streamWriter.WriteLine(layer.Fields.Count());
         }
+        public static void WriteLayerNameTxt(string name, StreamWriter sw)
+        {
+            sw.WriteLine(name);
+        }
+        public static void WriteFieldsTxt(List<GISField> fields, StreamWriter sw)
+        {
+            for (int i = 0; i < fields.Count; i++)
+            {
+                sw.WriteLine(fields[i].Name);
+                sw.WriteLine(fields[i].DataType);
+            }
+        }
+        public static void WriteFeaturesTxt(Layer layer, StreamWriter sw)
+        {
+            for (int featureIndex = 0; featureIndex < layer.FeatureCount(); featureIndex++)
+            {
+                GISFeature feature = layer.GetFeature(featureIndex);
+                if (layer.ShapeType == S.Point)
+                {
+                    ((GISPoint)feature.spatialPart).centroid.WriteVertex(sw);
+                }
+                else if (layer.ShapeType == S.Line)
+                {
+                    GISLine line = (GISLine)(feature.spatialPart);
+                    WriteMultipleVertexes(line.Vertexes, sw);
+
+                }
+                else if (layer.ShapeType == S.Polygon)
+                {
+                    GISPolygon polygon = (GISPolygon)(feature.spatialPart);
+                    WriteMultipleVertexes(polygon.Vertexes, sw);
+                }
+                WriteAttributes(feature.attributePart, sw);
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
         static void WriteFields(List<GISField> fields, BinaryWriter binaryWriter)
         {
             for (int fieldIndex = 0; fieldIndex < fields.Count(); fieldIndex++)
@@ -87,6 +136,22 @@ namespace My.GIS
             for (int vertexIndex = 0; vertexIndex < vertexes.Count(); vertexIndex++)
             {
                 vertexes[vertexIndex].WriteVertex(binaryWriter);
+            }
+        }
+        static void WriteMultipleVertexes(List<GISVertex> vertexes, StreamWriter sw)
+        {
+            sw.Write(vertexes.Count());
+            for (int vertexIndex = 0; vertexIndex < vertexes.Count(); vertexIndex++)
+            {
+                vertexes[vertexIndex].WriteVertex(sw);
+            }
+        }
+        static void WriteAttributes(GISAttribute attribute, StreamWriter sw)
+        {
+            for (int i = 0; i < attribute.ValueCount(); i++)
+            {
+                var value = attribute.GetValue(i);
+                sw.WriteLine(value);
             }
         }
         static void WriteAttributes(GISAttribute attribute, BinaryWriter binaryWriter)
@@ -250,6 +315,26 @@ namespace My.GIS
             fileStream.Close();
             return layer;
         }
+        //public static Layer ReadTxt(string filename)
+        //{
+        //    using (StreamReader sr = new StreamReader(filename))
+        //    {
+        //        ReadHeaderTxt(layer, streamWriter);
+        //        ReadLayerNameTxt(layer.Name, streamWriter);
+        //        ReadFieldsTxt(layer.Fields, streamWriter);
+        //        ReadFeaturesTxt(layer, streamWriter);
+                
+
+        //        layer.Extent = new GISMapExtent(Convert.ToDouble(sr.ReadLine()), Convert.ToDouble(sr.ReadLine()), Convert.ToDouble(sr.ReadLine()), Convert.ToDouble(sr.ReadLine()));
+        //        int featureCount = Convert.ToInt32(sr.ReadLine());
+        //        object reulst;
+        //        layer.ShapeType = (S)Convert.ToInt32(sr.ReadLine());
+        //        layer.FeatureCount = Convert.ToInt32(sr.ReadLine());
+        //        Layer layer = new Layer();
+
+        //    }
+
+        //}
 
     }
 

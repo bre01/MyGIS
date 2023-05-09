@@ -46,7 +46,8 @@ namespace Wpf8F
             openFileDialog.RestoreDirectory = false;
             openFileDialog.FilterIndex = 1;
             openFileDialog.Multiselect = false;
-            openFileDialog.ShowDialog();
+            Nullable<bool> result = openFileDialog.ShowDialog();
+            if (result != true) throw new Exception("choose a file");
             ShapefileTools shapefileTools = new ShapefileTools();
             _layer = shapefileTools.ReadShapefile(openFileDialog.FileName);
             _layer.DrawAttributeOrNot = false;

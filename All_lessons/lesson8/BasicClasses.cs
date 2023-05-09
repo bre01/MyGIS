@@ -47,6 +47,11 @@ namespace My.GIS
             binaryWriter.Write(x);
             binaryWriter.Write(y);
         }
+        public void WriteVertex(StreamWriter sw)
+        {
+            sw.WriteLine(x);
+            sw.WriteLine(y);
+        }
     }
     /*
      class GISPoint
@@ -590,6 +595,7 @@ namespace My.GIS
         {
             return _features.Count;
         }
+        
         public GISFeature GetFeature(int i)
         {
             return _features[i];

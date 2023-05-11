@@ -11,11 +11,13 @@ using System.IO;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Policy;
 using System.Text;
 using System.Windows.Forms;
 
 namespace My.GIS
 {
+    
     public class GISVertex
     {
         public double y;
@@ -88,11 +90,11 @@ namespace My.GIS
             centroid = vertext;
             mapExtent = new GISMapExtent(vertext, vertext);
         }
-        public override void Draw(Graphics graphics, MapAndClientConverter view)
+        public override void Draw(Graphics graphics, MapAndClientConverter view, bool Selected)
         {
             Point screenPoint = view.ToScreenPoint(centroid);
 
-            graphics.FillEllipse(new SolidBrush(Color.Red), new Rectangle((int)screenPoint.X - 3, (int)screenPoint.Y - 3, 6, 6));
+            graphics.FillEllipse(new SolidBrush(Selected? GISConst.SelectedPointColor:GISConst.PointColor), new Rectangle((int)screenPoint.X - GISConst.PointSize, (int)screenPoint.Y - GISConst.PointSize, GISConst.PointSize*2, GISConst.PointSize));
         }
         public double GetDistanceThisPointToVertex(GISVertex vertex)
         {
@@ -111,11 +113,11 @@ namespace My.GIS
             mapExtent = CalTool.CalculateExtent(Vertexes);
             Length = CalTool.CalculateLength(Vertexes);
         }
-        public override void Draw(Graphics graphics, MapAndClientConverter view)
+        public override void Draw(Graphics graphics, MapAndClientConverter view, bool Selected)
         {
             //
             Point[] points = CalTool.ToScreenPoints(Vertexes, view);
-            graphics.DrawLines(new Pen(Color.Red, 2), points);
+            graphics.DrawLines(new Pen(Selected?GISConst.SelectedLineColor:GISConst.LineColor, GISConst.LineWidth), points);
 
         }
         public GISVertex GetFromNode()
@@ -147,10 +149,10 @@ namespace My.GIS
             mapExtent = CalTool.CalculateExtent(Vertexes);
             Area = CalTool.CalculateArea(Vertexes);
         }
-        public override void Draw(Graphics graphics, MapAndClientConverter view)
+        public override void Draw(Graphics graphics, MapAndClientConverter view, bool Selected)
         {
             Point[] points = CalTool.ToScreenPoints(Vertexes, view);
-            graphics.FillPolygon(new SolidBrush(Color.Yellow), points);
+            graphics.FillPolygon(new SolidBrush(Selected?GISConst.SelectedPolygonFillColor:GISConst.PolygonFillColor), points);
             graphics.DrawPolygon(new Pen(Color.White, 2), points);
 
         }
@@ -193,6 +195,7 @@ namespace My.GIS
     {
         public GISSpatial spatialPart;
         public GISAttribute attributePart;
+        public bool Selected = false;
         public GISFeature(GISSpatial spatial, GISAttribute attribute)
         {
             spatialPart = spatial;
@@ -200,7 +203,7 @@ namespace My.GIS
         }
         public void Draw(Graphics graphics, MapAndClientConverter view, bool drawAttributeOrNot, int index)
         {
-            spatialPart.Draw(graphics, view);
+            spatialPart.Draw(graphics, view,Selected);
             if (drawAttributeOrNot)
             {
                 attributePart.Draw(graphics, view, spatialPart.centroid, index);
@@ -239,7 +242,7 @@ namespace My.GIS
     {
         public GISVertex centroid;
         public GISMapExtent mapExtent;
-        public abstract void Draw(Graphics graphics, MapAndClientConverter view);
+        public abstract void Draw(Graphics graphics, MapAndClientConverter view,bool Selected);
     }
     public class GISMapExtent
     {
@@ -983,5 +986,15 @@ namespace My.GIS
     public static class GISConst
     {
         public static double MinScreenDistance = 5;
+        public static int PointSize = 3;
+        public static Color PointColor = Color.Pink;
+        public static Color LineColor = Color.CadetBlue;
+        public static int LineWidth = 2;
+        public static Color PolygonBoundaryColor = Color.White;
+        public static Color PolygonFillColor = Color.Gray;
+        public static int PolygonBoundaryWidht = 2;
+        public static Color SelectedPointColor = Color.Red;
+        public static Color SelectedLineColor = Color.Blue;
+        public static Color SelectedPolygonFillColor = Color.Yellow;
     }
 }

@@ -774,6 +774,38 @@ namespace My.GIS
         System_UInt64,
         System_UInt16,
         System_Single,
+    }
+    public enum SelectResult
+    {
+        Ok,
+        EmptySet,
+        TooFar,
+        UnknownType
+    }
+    public class GISSelect
+    {
+        public GISFeature SelectedFeature = null;
+        public SelectResult Select(GISVertex vertex, List<GISFeature> features, S shapeType, MapAndClientConverter converter)
+        {
+            if (features.Count == 0) { return SelectResult.Ok; }
+            GISMapExtent minSelectExtent = BuildExtent(vertex, converter);
+            switch (shapeType)
+            {
+                case S.Point: return SelectPoint(vertex, features, converter, minSelectExtent);
+                case S.Line: return SelectLine(vertex, features, converter, minSelectExtent);
+                case S.Polygon: return SelectPolygon(vertex, features, converter, minSelectExtent);
+            }
+            return SelectResult.UnknownType;
+        }
+        public GISMapExtent BuildExtent(GISVertex vertex,MapAndClientConverter converter)
+        {
+            Point 
+        }
 
+
+    }
+    public class GISConst
+    {
+        static double MinScreenDistance = 5;
     }
 }

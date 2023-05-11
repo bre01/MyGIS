@@ -20,6 +20,7 @@ namespace lesson8
         {
             InitializeComponent();
             _converter = new MapAndClientConverter(new GISMapExtent(new GISVertex(0, 0), new GISVertex(100, 100)), ClientRectangle);
+            pixel_Box.Text = ClientRectangle.Width.ToString() +" "+ ClientRectangle.Height.ToString();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -61,6 +62,7 @@ namespace lesson8
         {
 
             _converter.UpdateConverter(extent, clientRectangle);
+            pixel_Box.Text = ClientRectangle.Width.ToString() + ClientRectangle.Height.ToString();
             DrawMap();
         }
 
@@ -125,6 +127,7 @@ namespace lesson8
         {
             if (_layer != null)
                 UpdateAndDraw(_layer.Extent, ClientRectangle);
+
         }
 
         private void button9_Click(object sender, EventArgs e)

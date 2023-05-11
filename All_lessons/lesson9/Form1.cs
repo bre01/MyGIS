@@ -173,7 +173,10 @@ namespace lesson9
             GISSelect gs = new GISSelect();
             if (gs.Select(vertex, _layer.GetAllFeatures(), _layer.ShapeType, _converter) == SelectResult.Ok)
             {
-                MessageBox.Show(gs.SelectedFeature.GetAttribute(0).ToString());
+                if (_layer.ShapeType == S.Polygon)
+                    MessageBox.Show(gs.SelectedFeatures[0].GetAttribute(0).ToString());
+                else
+                    MessageBox.Show(gs.SelectedFeature.GetAttribute(0).ToString());
             }
         }
 

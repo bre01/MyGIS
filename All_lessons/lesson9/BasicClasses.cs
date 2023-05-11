@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
 using System.Deployment.Application;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.IO;
 using System.Linq.Expressions;
@@ -46,6 +47,10 @@ namespace My.GIS
         {
             binaryWriter.Write(x);
             binaryWriter.Write(y);
+        }
+        public bool IsSame(GISVertex vertex)
+        {
+            return x == vertex.x && y == vertex.y;
         }
     }
     /*
@@ -148,6 +153,32 @@ namespace My.GIS
             graphics.FillPolygon(new SolidBrush(Color.Yellow), points);
             graphics.DrawPolygon(new Pen(Color.White, 2), points);
 
+        }
+        public bool Include(GISVertex vertex)
+        {
+            int count = 0;
+            for (int i = 0; i < Vertexes.Count; i++)
+            {
+                if (Vertexes[i].IsSame(vertex)) return false;
+                int next = (i + 1) % Vertexes.Count;
+                double minX = Math.Min(Vertexes[i].x, Vertexes[next].x);
+                double minY = Math.Min(Vertexes[i].y, Vertexes[next].y);
+                double maxX = Math.Max(Vertexes[i].x, Vertexes[next].x);
+                double maxY = Math.Max(Vertexes[i].y, Vertexes[next].y);
+                if (minX == maxY)
+                {
+                    if (minY == vertex.y && vertex.x > minX && vertex.x <= maxX) return false;
+                    else continue;
+                }
+                if (vertex.x > maxX || vertex.y > maxY || vertex.y < minY) continue;
+                double x0 = Vertexes[i].x + (vertex.y - Vertexes[i].y) * (Vertexes[next].x - Vertexes[i].x) / (Vertexes[next].y - Vertexes[i].y);
+                if (x0 < vertex.x) continue;
+                if (x0 == vertex.x) return false;
+                if (vertex.y == minY) continue;
+                count++;
+
+            }
+            return count % 2 != 0;
         }
     }
     /*class GISLine
@@ -837,6 +868,7 @@ namespace My.GIS
     public class GISSelect
     {
         public GISFeature SelectedFeature = null;
+        public List<GISFeature> SelectedFeatures = new List<GISFeature> ();
         public SelectResult Select(GISVertex vertex, List<GISFeature> features, S shapeType, MapAndClientConverter converter)
         {
             if (features.Count == 0) { return SelectResult.Ok; }
@@ -853,7 +885,7 @@ namespace My.GIS
         {
             Point p0 = converter.ToScreenPoint(vertex);
             Point p1 = new Point(p0.X + (int)GISConst.MinScreenDistance, p0.Y + (int)GISConst.MinScreenDistance);
-            Point p2 = new Point(p0.X -(int)GISConst.MinScreenDistance, p0.Y - (int)GISConst.MinScreenDistance);
+            Point p2 = new Point(p0.X - (int)GISConst.MinScreenDistance, p0.Y - (int)GISConst.MinScreenDistance);
             GISVertex gp1 = converter.ToMapVertex(p1);
             GISVertex gp2 = converter.ToMapVertex(p2);
             return new GISMapExtent(gp1.x, gp2.x, gp1.y, gp2.y);
@@ -864,7 +896,7 @@ namespace My.GIS
             int id = -1;
             for (int i = 0; i < features.Count; i++)
             {
-                if (MinSelectExtent.IntersectOrNot(features[i].spatialPart.mapExtent)==false) continue;
+                if (MinSelectExtent.IntersectOrNot(features[i].spatialPart.mapExtent) == false) continue;
                 GISPoint point = (GISPoint)(features[i].spatialPart);
                 double distance = point.GetDistanceThisPointToVertex(vertex);
                 if (distance < resultDistance)
@@ -932,7 +964,17 @@ namespace My.GIS
         }
         public SelectResult SelectPolygon(GISVertex vertex, List<GISFeature> features, MapAndClientConverter converter, GISMapExtent MinSelectExtent)
         {
-            return SelectResult.TooFar;
+            SelectedFeatures.Clear();
+            for (int i = 0; i < features.Count; i++)
+            {
+                if (MinSelectExtent.IntersectOrNot(features[i].spatialPart.mapExtent) == false) continue;
+                GISPolygon polygon = (GISPolygon)(features[i].spatialPart);
+                if (polygon.Include(vertex))
+                {
+                    SelectedFeatures.Add(features[i]);
+                }
+            }
+            return (SelectedFeatures.Count > 0) ? SelectResult.Ok : SelectResult.TooFar;
         }
 
 

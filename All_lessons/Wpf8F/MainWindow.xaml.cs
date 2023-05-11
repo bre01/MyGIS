@@ -62,6 +62,7 @@ namespace Wpf8F
         {
             _converter.UpdateConverter(extent, clientRectangle);
             MapCavans.Children.Clear();
+            Size_Box.Text = clientRectangle.Width.ToString() + " " + clientRectangle.Height.ToString();
             DrawMap();
 
         }

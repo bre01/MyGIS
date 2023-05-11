@@ -164,6 +164,19 @@ namespace lesson9
         {
 
         }
+
+        private void Form1_MouseClick(object sender, MouseEventArgs e)
+        {
+
+            if (_layer == null) return;
+            GISVertex vertex = _converter.ToMapVertex(new Point(e.X, e.Y));
+            GISSelect gs = new GISSelect();
+            if (gs.Select(vertex, _layer.GetAllFeatures(), _layer.ShapeType, _converter) == SelectResult.Ok)
+            {
+                MessageBox.Show(gs.SelectedFeature.GetAttribute(0).ToString());
+            }
+        }
+
     }
 
 

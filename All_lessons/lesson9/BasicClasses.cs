@@ -121,6 +121,15 @@ namespace My.GIS
         {
             return Vertexes[Vertexes.Count - 1];
         }
+        public double GetDistanceFromThisToVertex(GISVertex vertex)
+        {
+            double distance = double.MaxValue;
+            for (int i = 0; i < Vertexes.Count - 1; i++)
+            {
+                distance = Math.Min(CalTool.PointToSegment(Vertexes[i], Vertexes[i + 1], vertex), distance);
+            }
+            return distance;
+        }
     }
     public class GISPolygon : GISSpatial
     {
@@ -285,6 +294,13 @@ namespace My.GIS
             MapBottomLeft.x = newMapMinX;
             MapBottomLeft.y = newMapMinY;
         }
+        public bool IntersectOrNot(GISMapExtent extent)
+        {
+            return !(maxX() < extent.minX() ||
+                    minX() > extent.maxX() ||
+                    maxY() < extent.minY() ||
+                    minY() > extent.maxY());
+        }
 
     }
     public class MapAndClientConverter
@@ -329,6 +345,16 @@ namespace My.GIS
             double screenX = (vertex.x - mapMinX) / scaleX;
             double screenY = clientWindowHeight - (vertex.y - mapMinY) / scaleY;
             return new Point((int)screenX, (int)screenY);
+        }
+        public double ToScreenDistance(GISVertex v1, GISVertex v2)
+        {
+            Point p1 = ToScreenPoint(v1);
+            Point p2 = ToScreenPoint(v2);
+            return Math.Sqrt((double)((p1.X - p2.X) * (p1.X - p2.X)) + ((p1.Y - p2.Y) * (p1.Y - p2.Y)));
+        }
+        public double ToScreenDistance(double distance)
+        {
+            return ToScreenDistance(new GISVertex(0, 0), new GISVertex(0, distance));
         }
         public GISVertex ToMapVertex(Point point)
         {
@@ -594,6 +620,11 @@ namespace My.GIS
         {
             return _features[i];
         }
+        public List<GISFeature> GetAllFeatures()
+        {
+            return _features;
+        }
+
     }
     public static class CalTool
     {
@@ -745,6 +776,27 @@ namespace My.GIS
             byte[] sbytes = br.ReadBytes(length);
             return Encoding.Default.GetString(sbytes);
         }
+        public static double PointToSegment(GISVertex A, GISVertex B, GISVertex C)
+        {
+            double dot1 = Dot3Product(A, B, C);
+            if (dot1 > 0) return B.GetDistanceThisVToV(C);
+            double dot2 = Dot3Product(B, A, C);
+            if (dot2 > 0) return A.GetDistanceThisVToV(C);
+            double distance = Cross3Product(A, B, C) / A.GetDistanceThisVToV(B);
+            return Math.Abs(distance);
+        }
+        static double Dot3Product(GISVertex A, GISVertex B, GISVertex C)
+        {
+            GISVertex AB = new GISVertex(B.x - A.x, B.y - A.y);
+            GISVertex BC = new GISVertex(C.x - B.x, C.y - B.y);
+            return AB.x * BC.x + AB.y * BC.y;
+        }
+        static double Cross3Product(GISVertex A, GISVertex B, GISVertex C)
+        {
+            GISVertex AB = new GISVertex(B.x - A.x, B.y - A.y);
+            GISVertex AC = new GISVertex(C.x - A.x, C.y - A.y);
+            return VectorProduct(AB, AC);
+        }
 
     }
 
@@ -797,15 +849,97 @@ namespace My.GIS
             }
             return SelectResult.UnknownType;
         }
-        public GISMapExtent BuildExtent(GISVertex vertex,MapAndClientConverter converter)
+        public GISMapExtent BuildExtent(GISVertex vertex, MapAndClientConverter converter)
         {
-            Point 
+            Point p0 = converter.ToScreenPoint(vertex);
+            Point p1 = new Point(p0.X + (int)GISConst.MinScreenDistance, p0.Y + (int)GISConst.MinScreenDistance);
+            Point p2 = new Point(p0.X -(int)GISConst.MinScreenDistance, p0.Y - (int)GISConst.MinScreenDistance);
+            GISVertex gp1 = converter.ToMapVertex(p1);
+            GISVertex gp2 = converter.ToMapVertex(p2);
+            return new GISMapExtent(gp1.x, gp2.x, gp1.y, gp2.y);
+        }
+        public SelectResult SelectPoint(GISVertex vertex, List<GISFeature> features, MapAndClientConverter converter, GISMapExtent MinSelectExtent)
+        {
+            double resultDistance = double.MaxValue;
+            int id = -1;
+            for (int i = 0; i < features.Count; i++)
+            {
+                if (MinSelectExtent.IntersectOrNot(features[i].spatialPart.mapExtent)==false) continue;
+                GISPoint point = (GISPoint)(features[i].spatialPart);
+                double distance = point.GetDistanceThisPointToVertex(vertex);
+                if (distance < resultDistance)
+                {
+                    resultDistance = distance;
+                    id = i;
+                }
+            }
+            if (id == -1)
+            {
+                SelectedFeature = null;
+                return SelectResult.TooFar;
+            }
+            else
+            {
+                double screenDistance = converter.ToScreenDistance(vertex, features[id].spatialPart.centroid);
+                if (screenDistance <= GISConst.MinScreenDistance)
+                {
+                    SelectedFeature = features[id];
+                    return SelectResult.Ok;
+                }
+                else
+                {
+                    SelectedFeature = null;
+                    return SelectResult.TooFar;
+                }
+            }
+        }
+        public SelectResult SelectLine(GISVertex vertex, List<GISFeature> features, MapAndClientConverter converter, GISMapExtent MinSelectExtent)
+        {
+            double resultDistance = double.MaxValue;
+            int id = -1;
+            for (int i = 0; i < features.Count; i++)
+            {
+                if (MinSelectExtent.IntersectOrNot(features[i].spatialPart.mapExtent) == false) continue;
+                GISLine line = (GISLine)(features[i].spatialPart);
+                double distance = line.GetDistanceFromThisToVertex(vertex);
+                if (distance < resultDistance)
+                {
+                    resultDistance = distance;
+                    id = i;
+                }
+            }
+
+            if (id == -1)
+            {
+                SelectedFeature = null;
+                return SelectResult.TooFar;
+            }
+            else
+            {
+                double screenDistance = converter.ToScreenDistance(resultDistance);
+                if (screenDistance <= GISConst.MinScreenDistance)
+                {
+                    SelectedFeature = features[id];
+                    return SelectResult.Ok;
+                }
+                else
+                {
+                    SelectedFeature = null;
+                    return SelectResult.TooFar;
+
+                }
+            }
+        }
+        public SelectResult SelectPolygon(GISVertex vertex, List<GISFeature> features, MapAndClientConverter converter, GISMapExtent MinSelectExtent)
+        {
+            return SelectResult.TooFar;
         }
 
 
+
     }
-    public class GISConst
+    public static class GISConst
     {
-        static double MinScreenDistance = 5;
+        public static double MinScreenDistance = 5;
     }
 }

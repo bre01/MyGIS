@@ -17,7 +17,7 @@ using System.Windows.Forms;
 
 namespace My.GIS
 {
-    
+
     public class GISVertex
     {
         public double y;
@@ -94,7 +94,7 @@ namespace My.GIS
         {
             Point screenPoint = view.ToScreenPoint(centroid);
 
-            graphics.FillEllipse(new SolidBrush(Selected? GISConst.SelectedPointColor:GISConst.PointColor), new Rectangle((int)screenPoint.X - GISConst.PointSize, (int)screenPoint.Y - GISConst.PointSize, GISConst.PointSize*2, GISConst.PointSize));
+            graphics.FillEllipse(new SolidBrush(Selected ? GISConst.SelectedPointColor : GISConst.PointColor), new Rectangle((int)screenPoint.X - GISConst.PointSize, (int)screenPoint.Y - GISConst.PointSize, GISConst.PointSize * 2, GISConst.PointSize));
         }
         public double GetDistanceThisPointToVertex(GISVertex vertex)
         {
@@ -117,7 +117,7 @@ namespace My.GIS
         {
             //
             Point[] points = CalTool.ToScreenPoints(Vertexes, view);
-            graphics.DrawLines(new Pen(Selected?GISConst.SelectedLineColor:GISConst.LineColor, GISConst.LineWidth), points);
+            graphics.DrawLines(new Pen(Selected ? GISConst.SelectedLineColor : GISConst.LineColor, GISConst.LineWidth), points);
 
         }
         public GISVertex GetFromNode()
@@ -152,8 +152,8 @@ namespace My.GIS
         public override void Draw(Graphics graphics, MapAndClientConverter view, bool Selected)
         {
             Point[] points = CalTool.ToScreenPoints(Vertexes, view);
-            graphics.FillPolygon(new SolidBrush(Selected?GISConst.SelectedPolygonFillColor:GISConst.PolygonFillColor), points);
-            graphics.DrawPolygon(new Pen(Color.White, 2), points);
+            graphics.FillPolygon(new SolidBrush(Selected ? GISConst.SelectedPolygonFillColor : GISConst.PolygonFillColor), points);
+            graphics.DrawPolygon(new Pen(GISConst.PolygonBoundaryColor, GISConst.PolygonBoundaryWidth), points);
 
         }
         public bool Include(GISVertex vertex)
@@ -203,7 +203,7 @@ namespace My.GIS
         }
         public void Draw(Graphics graphics, MapAndClientConverter view, bool drawAttributeOrNot, int index)
         {
-            spatialPart.Draw(graphics, view,Selected);
+            spatialPart.Draw(graphics, view, Selected);
             if (drawAttributeOrNot)
             {
                 attributePart.Draw(graphics, view, spatialPart.centroid, index);
@@ -242,7 +242,7 @@ namespace My.GIS
     {
         public GISVertex centroid;
         public GISMapExtent mapExtent;
-        public abstract void Draw(Graphics graphics, MapAndClientConverter view,bool Selected);
+        public abstract void Draw(Graphics graphics, MapAndClientConverter view, bool Selected);
     }
     public class GISMapExtent
     {
@@ -620,6 +620,8 @@ namespace My.GIS
         public S ShapeType;
         private List<GISFeature> _features = new List<GISFeature>();
         public List<GISField> Fields;
+        public List<GISFeature> Selection = new List<GISFeature>();
+
 
         public Layer(string name, S shapeType, GISMapExtent extent)
         {
@@ -634,6 +636,40 @@ namespace My.GIS
             ShapeType = shapeType;
             Extent = extent;
             Fields = fields;
+        }
+        public SelectResult Select(GISVertex vertex, MapAndClientConverter converter)
+        {
+            GISSelect gs = new GISSelect();
+            SelectResult sr = gs.Select(vertex, _features, ShapeType, converter);
+            if (sr == SelectResult.Ok)
+            {
+                if (ShapeType == S.Polygon)
+                {
+                    for (int i = 0; i < gs.SelectedFeatures.Count; i++)
+                    {
+                        if (gs.SelectedFeatures[i].Selected == false)
+                        {
+                            gs.SelectedFeatures[i].Selected = true;
+                            Selection.Add(gs.SelectedFeatures[i]);
+                        }
+                    }
+                }
+                else
+                {
+                    if (gs.SelectedFeature.Selected == false)
+                    {
+                        gs.SelectedFeature.Selected = true;
+                        Selection.Add(gs.SelectedFeature);
+                    }
+                }
+            }
+            return sr;
+        }
+        public void ClearSelection()
+        {
+            for (int i = 0; i < Selection.Count; i++)
+                Selection[i].Selected = false;
+            Selection.Clear();
         }
         public void Draw(Graphics graphics, MapAndClientConverter view)
         {
@@ -871,7 +907,7 @@ namespace My.GIS
     public class GISSelect
     {
         public GISFeature SelectedFeature = null;
-        public List<GISFeature> SelectedFeatures = new List<GISFeature> ();
+        public List<GISFeature> SelectedFeatures = new List<GISFeature>();
         public SelectResult Select(GISVertex vertex, List<GISFeature> features, S shapeType, MapAndClientConverter converter)
         {
             if (features.Count == 0) { return SelectResult.Ok; }
@@ -992,7 +1028,7 @@ namespace My.GIS
         public static int LineWidth = 2;
         public static Color PolygonBoundaryColor = Color.White;
         public static Color PolygonFillColor = Color.Gray;
-        public static int PolygonBoundaryWidht = 2;
+        public static int PolygonBoundaryWidth = 2;
         public static Color SelectedPointColor = Color.Red;
         public static Color SelectedLineColor = Color.Blue;
         public static Color SelectedPolygonFillColor = Color.Yellow;

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -170,16 +171,34 @@ namespace lesson9
 
             if (_layer == null) return;
             GISVertex vertex = _converter.ToMapVertex(new Point(e.X, e.Y));
-            GISSelect gs = new GISSelect();
-            if (gs.Select(vertex, _layer.GetAllFeatures(), _layer.ShapeType, _converter) == SelectResult.Ok)
+            //GISSelect gs = new GISSelect();
+            //if (gs.Select(vertex, _layer.GetAllFeatures(), _layer.ShapeType, _converter) == SelectResult.Ok)
+            //{
+            //    if (_layer.ShapeType == S.Polygon)
+            //        MessageBox.Show(gs.SelectedFeatures[0].GetAttribute(0).ToString());
+            //    else
+            //        MessageBox.Show(gs.SelectedFeature.GetAttribute(0).ToString());
+            //}
+            SelectResult sr = _layer.Select(vertex, _converter);
+            if (sr == SelectResult.Ok)
             {
-                if (_layer.ShapeType == S.Polygon)
-                    MessageBox.Show(gs.SelectedFeatures[0].GetAttribute(0).ToString());
-                else
-                    MessageBox.Show(gs.SelectedFeature.GetAttribute(0).ToString());
+                UpdateAndDraw(_layer.Extent,ClientRectangle);
+                toolStripStatusLabel1.Text=_layer.Selection.Count.ToString();
             }
         }
 
+        private void label3_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            if(_layer == null) return;
+            _layer.ClearSelection();
+            UpdateAndDraw(_layer.Extent, ClientRectangle);
+            toolStripStatusLabel1.Text = "0";
+        }
     }
 
 

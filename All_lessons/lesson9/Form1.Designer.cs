@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
@@ -45,6 +46,12 @@
             this.button11 = new System.Windows.Forms.Button();
             this.y_extent_box = new System.Windows.Forms.TextBox();
             this.lab = new System.Windows.Forms.Label();
+            this.button12 = new System.Windows.Forms.Button();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
@@ -130,7 +137,7 @@
             // x_extent_box
             // 
             this.x_extent_box.Location = new System.Drawing.Point(55, 104);
-            this.x_extent_box.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.x_extent_box.Margin = new System.Windows.Forms.Padding(2);
             this.x_extent_box.Name = "x_extent_box";
             this.x_extent_box.Size = new System.Drawing.Size(248, 20);
             this.x_extent_box.TabIndex = 8;
@@ -139,7 +146,7 @@
             // shape_box
             // 
             this.shape_box.Location = new System.Drawing.Point(400, 1);
-            this.shape_box.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.shape_box.Margin = new System.Windows.Forms.Padding(2);
             this.shape_box.Name = "shape_box";
             this.shape_box.Size = new System.Drawing.Size(68, 20);
             this.shape_box.TabIndex = 9;
@@ -202,7 +209,7 @@
             // y_extent_box
             // 
             this.y_extent_box.Location = new System.Drawing.Point(55, 142);
-            this.y_extent_box.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.y_extent_box.Margin = new System.Windows.Forms.Padding(2);
             this.y_extent_box.Name = "y_extent_box";
             this.y_extent_box.Size = new System.Drawing.Size(248, 20);
             this.y_extent_box.TabIndex = 15;
@@ -218,11 +225,40 @@
             this.lab.Text = "Y extent";
             this.lab.Click += new System.EventHandler(this.label3_Click);
             // 
+            // button12
+            // 
+            this.button12.Location = new System.Drawing.Point(10, 187);
+            this.button12.Name = "button12";
+            this.button12.Size = new System.Drawing.Size(75, 23);
+            this.button12.TabIndex = 17;
+            this.button12.Text = "Clear Selection";
+            this.button12.UseVisualStyleBackColor = true;
+            this.button12.Click += new System.EventHandler(this.button12_Click);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 428);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(800, 22);
+            this.statusStrip1.TabIndex = 18;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
+            this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.button12);
             this.Controls.Add(this.lab);
             this.Controls.Add(this.y_extent_box);
             this.Controls.Add(this.button11);
@@ -244,6 +280,9 @@
             this.Text = "                                                            ";
             this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -268,6 +307,10 @@
         private System.Windows.Forms.Button button11;
         private System.Windows.Forms.TextBox y_extent_box;
         private System.Windows.Forms.Label lab;
+        private System.Windows.Forms.Button button12;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.BindingSource bindingSource1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
     }
 }
 

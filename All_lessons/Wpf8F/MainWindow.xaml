@@ -43,6 +43,7 @@
         <Canvas Name="MapCavans" HorizontalAlignment="Left" Width="595" Margin="205,10,0,-10">
 
         </Canvas>
+        <TextBox x:Name="Size_Box" HorizontalAlignment="Left" Margin="26,328,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
 
     </Grid>
 </Window>

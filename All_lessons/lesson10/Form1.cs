@@ -5,22 +5,24 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 
-namespace lesson8
+namespace lesson10
 {
     public partial class Form1 : Form
     {
         Layer _layer = null;
         MapAndClientConverter _converter = null;
+        Form2 _attributeWindow = null;
+        Bitmap _backWindow;
         public Form1()
         {
             InitializeComponent();
             _converter = new MapAndClientConverter(new GISMapExtent(new GISVertex(0, 0), new GISVertex(100, 100)), ClientRectangle);
-            pixel_Box.Text = ClientRectangle.Width.ToString() +" "+ ClientRectangle.Height.ToString();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -35,7 +37,7 @@ namespace lesson8
             _layer = shapefileTools.ReadShapefile(openFileDialog.FileName);
             _layer.DrawAttributeOrNot = false;
             MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
-            UpdateAndDraw(_layer.Extent, ClientRectangle);
+            UpdateAndDraw();
             shape_box.Text = _layer.ShapeType.ToString();
             x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.Extent.minX(), _layer.Extent.maxX());
             y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.Extent.minY(), _layer.Extent.maxY());
@@ -56,23 +58,41 @@ namespace lesson8
             //update map button clicked
             /*_converter.UpdateConverter(_layer.Extent, ClientRectangle);
             DrawMap();*/
-            UpdateAndDraw(_layer.Extent, ClientRectangle);
+            UpdateAndDraw();
         }
-        private void UpdateAndDraw(GISMapExtent extent, Rectangle clientRectangle)
+        public void UpdateAndDraw()
         {
 
-            _converter.UpdateConverter(extent, clientRectangle);
-            pixel_Box.Text = ClientRectangle.Width.ToString() + ClientRectangle.Height.ToString();
+            _converter.UpdateConverter(_layer.Extent, this.ClientRectangle);
             DrawMap();
+            UpdateStatusBar();
+        }
+        void UpdateStatusBar()
+        {
+            toolStripStatusLabel1.Text = _layer.Selection.Count.ToString();
         }
 
 
         private void DrawMap()
         {
-            Graphics graphics = CreateGraphics();
-            graphics.FillRectangle(new SolidBrush(Color.Black), ClientRectangle);
+            if (ClientRectangle.Width * ClientRectangle.Height == 0)
+            {
+                return;
+            }
+            _converter.UpdateConverter(_layer.Extent, this.ClientRectangle);
+            if (_backWindow != null)
+            {
+                _backWindow.Dispose();
+            }
+            _backWindow = new Bitmap(ClientRectangle.Width, ClientRectangle.Height);
+            Graphics graphics = Graphics.FromImage(_backWindow);
 
+            //Graphics graphics = CreateGraphics();
+            graphics.FillRectangle(new SolidBrush(Color.Black), ClientRectangle);
             _layer.Draw(graphics, _converter);
+            Graphics graphics1 = CreateGraphics();
+            graphics1.DrawImage(_backWindow, 0, 0);
+
         }
         private void map_button_Click(object sender, EventArgs e)
         {
@@ -126,15 +146,24 @@ namespace lesson8
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
             if (_layer != null)
-                UpdateAndDraw(_layer.Extent, ClientRectangle);
-
+                UpdateAndDraw();
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
-            Form2 form2 = new Form2(_layer);
-            form2.Show();
+            //Form2 form2 = new Form2(_layer);
+            //form2.Show();
+            OpenAttributeWindow();
 
+        }
+        private void OpenAttributeWindow()
+        {
+            if (_layer == null) return;
+            if (_attributeWindow == null) _attributeWindow = new Form2(_layer, this);
+            if (_attributeWindow.IsDisposed) _attributeWindow = new Form2(_layer, this);
+            _attributeWindow.Show();
+            if (_attributeWindow.WindowState == FormWindowState.Minimized) _attributeWindow.WindowState = FormWindowState.Normal;
+            _attributeWindow.BringToFront();
         }
 
         private void button10_Click(object sender, EventArgs e)
@@ -166,6 +195,49 @@ namespace lesson8
         private void label3_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void Form1_MouseClick(object sender, MouseEventArgs e)
+        {
+
+            if (_layer == null) return;
+            GISVertex vertex = _converter.ToMapVertex(new Point(e.X, e.Y));
+            //GISSelect gs = new GISSelect();
+            //if (gs.Select(vertex, _layer.GetAllFeatures(), _layer.ShapeType, _converter) == SelectResult.Ok)
+            //{
+            //    if (_layer.ShapeType == S.Polygon)
+            //        MessageBox.Show(gs.SelectedFeatures[0].GetAttribute(0).ToString());
+            //    else
+            //        MessageBox.Show(gs.SelectedFeature.GetAttribute(0).ToString());
+            //}
+            SelectResult sr = _layer.Select(vertex, _converter);
+            if (sr == SelectResult.Ok)
+            {
+                UpdateAndDraw();
+                toolStripStatusLabel1.Text = _layer.Selection.Count.ToString();
+                UpdateAttributeWindow();
+            }
+        }
+
+        private void label3_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            if (_layer == null) return;
+            _layer.ClearSelection();
+            UpdateAndDraw();
+            toolStripStatusLabel1.Text = "0";
+            UpdateAttributeWindow();
+        }
+        private void UpdateAttributeWindow()
+        {
+            if (_layer == null) return;
+            if (_attributeWindow == null) return;
+            if (_attributeWindow.IsDisposed) return;
+            _attributeWindow.UpdateData();
         }
     }
 

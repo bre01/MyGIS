@@ -282,6 +282,10 @@ namespace My.GIS
         public double minY { get { return mapBottomLeft.y; } }
         public double maxY { get { return mapUpRight.y; } }
         public double maxX { get { return mapUpRight.x; } }*/
+        public GISVertex GetCenter()
+        {
+            return new GISVertex((MapUpRight.x + MapBottomLeft.x) / 2, (MapUpRight.y + MapBottomLeft.y) / 2);
+        }
 
         public void ChangeExtent(GISMapActions action)
         {
@@ -365,16 +369,30 @@ namespace My.GIS
         {
             _currentMapExtent = extent;
             _clientWindowRectangle = rectangle;
-            mapMinX = _currentMapExtent.minX();
-            mapMinY = _currentMapExtent.minY();
+            //mapMinX = _currentMapExtent.minX();
+            //mapMinY = _currentMapExtent.minY();
             clientWindowWidth = rectangle.Width;
             clientWindowHeight = rectangle.Height;
-            mapW = _currentMapExtent.width();
-            mapH = _currentMapExtent.height();
-            scaleX = mapW / clientWindowWidth;
-            scaleY = mapH / clientWindowHeight;
+            //mapW = _currentMapExtent.width();
+            //mapH = _currentMapExtent.height();
+            scaleX = _currentMapExtent.width()/ clientWindowWidth;
+            scaleY=_currentMapExtent.height()/ clientWindowHeight;
+            scaleX = Math.Max(scaleX, scaleY);
+            scaleY = scaleX;
+            mapW = _clientWindowRectangle.Width * scaleX;
+            mapH = _clientWindowRectangle.Height * scaleY;
+            GISVertex center = _currentMapExtent.GetCenter();
+            mapMinX = center.x - mapW / 2;
+            mapMinY = center.y - mapH / 2;
+
+
 
         }
+        public GISMapExtent GetRealExtent()
+        {
+            return new GISMapExtent(mapMinX, mapMinX + mapW, mapMinY, mapMinY + mapH);
+        }
+
         public Point ToScreenPoint(GISVertex vertex)
         {
             double screenX = (vertex.x - mapMinX) / scaleX;
@@ -672,11 +690,17 @@ namespace My.GIS
                 Selection[i].Selected = false;
             Selection.Clear();
         }
-        public void Draw(Graphics graphics, MapAndClientConverter view)
+        public void Draw(Graphics graphics, MapAndClientConverter converter)
         {
+            GISMapExtent extent = converter.GetRealExtent();
             for (int i = 0; i < _features.Count; i++)
             {
-                _features[i].Draw(graphics, view, this.DrawAttributeOrNot, this.LabelIndex);
+                if (extent.IntersectOrNot(_features[i].spatialPart.mapExtent))
+                {
+
+                    _features[i].Draw(graphics, converter, this.DrawAttributeOrNot, this.LabelIndex);
+                }
+
             }
         }
         public void AddFeature(GISFeature feature)

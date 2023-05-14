@@ -239,6 +239,14 @@ namespace lesson10
             if (_attributeWindow.IsDisposed) return;
             _attributeWindow.UpdateData();
         }
+
+        private void Form1_Paint(object sender, PaintEventArgs e)
+        {
+            if (_backWindow != null)
+            {
+                e.Graphics.DrawImage(_backWindow, 0, 0);
+            }
+        }
     }
 
 

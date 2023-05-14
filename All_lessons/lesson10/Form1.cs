@@ -18,6 +18,7 @@ namespace lesson10
         Layer _layer = null;
         MapAndClientConverter _converter = null;
         Form2 _attributeWindow = null;
+        Bitmap _backWindow;
         public Form1()
         {
             InitializeComponent();
@@ -68,16 +69,30 @@ namespace lesson10
         }
         void UpdateStatusBar()
         {
-            toolStripStatusLabel1.Text=_layer.Selection.Count.ToString(); 
+            toolStripStatusLabel1.Text = _layer.Selection.Count.ToString();
         }
 
 
         private void DrawMap()
         {
-            Graphics graphics = CreateGraphics();
-            graphics.FillRectangle(new SolidBrush(Color.Black), ClientRectangle);
+            if (ClientRectangle.Width * ClientRectangle.Height == 0)
+            {
+                return;
+            }
+            _converter.UpdateConverter(_layer.Extent, this.ClientRectangle);
+            if (_backWindow != null)
+            {
+                _backWindow.Dispose();
+            }
+            _backWindow = new Bitmap(ClientRectangle.Width, ClientRectangle.Height);
+            Graphics graphics = Graphics.FromImage(_backWindow);
 
+            //Graphics graphics = CreateGraphics();
+            graphics.FillRectangle(new SolidBrush(Color.Black), ClientRectangle);
             _layer.Draw(graphics, _converter);
+            Graphics graphics1 = CreateGraphics();
+            graphics1.DrawImage(_backWindow, 0, 0);
+
         }
         private void map_button_Click(object sender, EventArgs e)
         {
@@ -219,9 +234,9 @@ namespace lesson10
         }
         private void UpdateAttributeWindow()
         {
-            if(_layer == null) return;
-            if(_attributeWindow == null) return;
-            if(_attributeWindow.IsDisposed) return;
+            if (_layer == null) return;
+            if (_attributeWindow == null) return;
+            if (_attributeWindow.IsDisposed) return;
             _attributeWindow.UpdateData();
         }
     }

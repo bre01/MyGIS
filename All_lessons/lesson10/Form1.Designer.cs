@@ -276,6 +276,7 @@
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
+            this.DoubleBuffered = true;
             this.Name = "Form1";
             this.Text = "                                                            ";
             this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);

@@ -35,6 +35,16 @@
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
+            this.button7 = new System.Windows.Forms.Button();
+            this.button8 = new System.Windows.Forms.Button();
+            this.button9 = new System.Windows.Forms.Button();
+            this.button10 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // listBox1
@@ -45,44 +55,49 @@
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(120, 79);
             this.listBox1.TabIndex = 0;
+            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
             this.checkBox1.Location = new System.Drawing.Point(70, 192);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(150, 29);
+            this.checkBox1.Size = new System.Drawing.Size(145, 29);
             this.checkBox1.TabIndex = 1;
-            this.checkBox1.Text = "checkBox1";
+            this.checkBox1.Text = "Selectable";
             this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.Click += new System.EventHandler(this.Clicked);
             // 
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
             this.checkBox2.Location = new System.Drawing.Point(70, 247);
             this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(150, 29);
+            this.checkBox2.Size = new System.Drawing.Size(108, 29);
             this.checkBox2.TabIndex = 2;
-            this.checkBox2.Text = "checkBox2";
+            this.checkBox2.Text = "Visible";
             this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkBox2.Click += new System.EventHandler(this.Clicked);
             // 
             // checkBox3
             // 
             this.checkBox3.AutoSize = true;
             this.checkBox3.Location = new System.Drawing.Point(70, 301);
             this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(150, 29);
+            this.checkBox3.Size = new System.Drawing.Size(124, 29);
             this.checkBox3.TabIndex = 3;
-            this.checkBox3.Text = "checkBox3";
+            this.checkBox3.Text = "Attribute";
             this.checkBox3.UseVisualStyleBackColor = true;
+            this.checkBox3.Click += new System.EventHandler(this.Clicked);
             // 
             // comboBox1
             // 
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(350, 231);
+            this.comboBox1.Location = new System.Drawing.Point(355, 247);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 33);
             this.comboBox1.TabIndex = 4;
+            this.comboBox1.Click += new System.EventHandler(this.Clicked);
             // 
             // label1
             // 
@@ -100,11 +115,113 @@
             this.textBox1.Size = new System.Drawing.Size(100, 31);
             this.textBox1.TabIndex = 6;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(516, 1268);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(201, 43);
+            this.button1.TabIndex = 7;
+            this.button1.Text = "add layer";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(779, 1268);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(129, 59);
+            this.button2.TabIndex = 8;
+            this.button2.Text = "delete layer";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(948, 1268);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(95, 59);
+            this.button3.TabIndex = 9;
+            this.button3.Text = " export layer";
+            this.button3.UseVisualStyleBackColor = true;
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(1110, 1268);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(116, 59);
+            this.button4.TabIndex = 10;
+            this.button4.Text = "save docs";
+            this.button4.UseVisualStyleBackColor = true;
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(1679, 301);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(117, 66);
+            this.button5.TabIndex = 11;
+            this.button5.Text = "move up";
+            this.button5.UseVisualStyleBackColor = true;
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(1679, 381);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(127, 72);
+            this.button6.TabIndex = 12;
+            this.button6.Text = "move down";
+            this.button6.UseVisualStyleBackColor = true;
+            // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(1701, 495);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(95, 43);
+            this.button7.TabIndex = 13;
+            this.button7.Text = "tables";
+            this.button7.UseVisualStyleBackColor = true;
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(581, 381);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(112, 54);
+            this.button8.TabIndex = 14;
+            this.button8.Text = "change";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
+            // button9
+            // 
+            this.button9.Location = new System.Drawing.Point(516, 441);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(110, 46);
+            this.button9.TabIndex = 15;
+            this.button9.Text = "apply";
+            this.button9.UseVisualStyleBackColor = true;
+            // 
+            // button10
+            // 
+            this.button10.Location = new System.Drawing.Point(659, 441);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(170, 60);
+            this.button10.TabIndex = 16;
+            this.button10.Text = "close";
+            this.button10.UseVisualStyleBackColor = true;
+            // 
             // Documents
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1866, 1490);
+            this.Controls.Add(this.button10);
+            this.Controls.Add(this.button9);
+            this.Controls.Add(this.button8);
+            this.Controls.Add(this.button7);
+            this.Controls.Add(this.button6);
+            this.Controls.Add(this.button5);
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBox1);
@@ -114,6 +231,7 @@
             this.Controls.Add(this.listBox1);
             this.Name = "Documents";
             this.Text = "Documents";
+            this.Shown += new System.EventHandler(this.Documents_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -128,5 +246,15 @@
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Button button10;
     }
 }

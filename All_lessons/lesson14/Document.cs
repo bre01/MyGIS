@@ -6,9 +6,20 @@ using System.Threading.Tasks;
 
 namespace My.GIS
 {
-    public class Document
+    public class GISDocument
     {
-        public List<Layer> Layers=new List<Layer>();
+        public List<Layer> Layers = new List<Layer>();
         GISMapExtent _extent;
+        public Layer GetLayer(string layerName)
+        {
+            for (int i = 0; i < Layers.Count;)
+            {
+                if (Layers[i].Name == layerName)
+                {
+                    return Layers[i];
+                }
+            }
+            return null;
+        }
     }
 }

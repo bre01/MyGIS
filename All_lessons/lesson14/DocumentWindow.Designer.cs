@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.list = new System.Windows.Forms.ListBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
@@ -48,15 +48,15 @@
             this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // listBox1
+            // list
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 25;
-            this.listBox1.Location = new System.Drawing.Point(60, 47);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(983, 529);
-            this.listBox1.TabIndex = 0;
-            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            this.list.FormattingEnabled = true;
+            this.list.ItemHeight = 25;
+            this.list.Location = new System.Drawing.Point(60, 47);
+            this.list.Name = "list";
+            this.list.Size = new System.Drawing.Size(983, 529);
+            this.list.TabIndex = 0;
+            this.list.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
             // checkBox1
             // 
@@ -134,6 +134,7 @@
             this.button2.TabIndex = 8;
             this.button2.Text = "delete layer";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button3
             // 
@@ -143,6 +144,7 @@
             this.button3.TabIndex = 9;
             this.button3.Text = " export layer";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // button4
             // 
@@ -152,6 +154,7 @@
             this.button4.TabIndex = 10;
             this.button4.Text = "save docs";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button5
             // 
@@ -159,8 +162,9 @@
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(117, 66);
             this.button5.TabIndex = 11;
-            this.button5.Text = "move up";
+            this.button5.Text = "move layers up";
             this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // button6
             // 
@@ -168,8 +172,9 @@
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(127, 72);
             this.button6.TabIndex = 12;
-            this.button6.Text = "move down";
+            this.button6.Text = "move layers down";
             this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // button7
             // 
@@ -217,7 +222,7 @@
             this.label2.TabIndex = 17;
             this.label2.Text = "File path";
             // 
-            // Documents
+            // DocumentWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -239,8 +244,8 @@
             this.Controls.Add(this.checkBox3);
             this.Controls.Add(this.checkBox2);
             this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.listBox1);
-            this.Name = "Documents";
+            this.Controls.Add(this.list);
+            this.Name = "DocumentWindow";
             this.Text = "Documents";
             this.Shown += new System.EventHandler(this.Documents_Shown);
             this.ResumeLayout(false);
@@ -250,7 +255,7 @@
 
         #endregion
 
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox list;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.CheckBox checkBox3;

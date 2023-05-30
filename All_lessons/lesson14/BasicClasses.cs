@@ -33,6 +33,11 @@ namespace My.GIS
             x = br.ReadDouble();
             y = br.ReadDouble();
         }
+        public GISVertex(GISVertex v)
+        {
+            CopyVertex(v);
+        }
+
 
         public double GetDistanceThisVToV(GISVertex gISVertex)
         {
@@ -260,12 +265,25 @@ namespace My.GIS
             MapBottomLeft = bottomLeft;
             MapUpRight = upRight;
         }
+        public GISMapExtent(GISMapExtent extent)
+        {
+            MapUpRight = new GISVertex(extent.MapUpRight);
+            MapBottomLeft = new GISVertex(extent.MapBottomLeft);
+
+        }
         public GISMapExtent(double x1, double x2, double y1, double y2)
         {
             //so the order of the parameter doesn't matter
             //we use Math.Max() to determine which one is RightUp or BottomLeft
             MapUpRight = new GISVertex(Math.Max(x1, x2), Math.Max(y1, y2));
             MapBottomLeft = new GISVertex(Math.Min(x1, x2), Math.Min(y1, y2));
+        }
+        public void Merge(GISMapExtent extent)
+        {
+            MapUpRight.x = Math.Max(MapUpRight.x, extent.MapUpRight.x);
+            MapUpRight.y = Math.Max(MapUpRight.y, extent.MapUpRight.y);
+            MapBottomLeft.x = Math.Min(MapBottomLeft.x, extent.MapBottomLeft.x);
+            MapBottomLeft.y = Math.Min(MapBottomLeft.y, extent.MapBottomLeft.y);
         }
         // these all all properties, which I didn'e even notice, I'm so stupid
         public double minX() { return MapBottomLeft.x; }
@@ -375,8 +393,8 @@ namespace My.GIS
             clientWindowHeight = rectangle.Height;
             //mapW = _currentMapExtent.width();
             //mapH = _currentMapExtent.height();
-            scaleX = _currentMapExtent.width()/ clientWindowWidth;
-            scaleY=_currentMapExtent.height()/ clientWindowHeight;
+            scaleX = _currentMapExtent.width() / clientWindowWidth;
+            scaleY = _currentMapExtent.height() / clientWindowHeight;
             scaleX = Math.Max(scaleX, scaleY);
             scaleY = scaleX;
             mapW = _clientWindowRectangle.Width * scaleX;
@@ -624,7 +642,7 @@ namespace My.GIS
 
     }
 
-    
+
     public static class CalTool
     {
         public static GISVertex CalculateCentroid(List<GISVertex> vertexes)
@@ -961,5 +979,17 @@ namespace My.GIS
         public static Color SelectedPointColor = Color.Red;
         public static Color SelectedLineColor = Color.Blue;
         public static Color SelectedPolygonFillColor = Color.Yellow;
+        public static string SHPFILE = "shp";
+        public static string MYFILE = "gis";
+        public static string MYDOC = "mydoc";
+        public static Color ZoomSelectBoxColor = Color.FromArgb(50, 255, 0, 0);
+    }
+    public enum MOUSECOMMAND
+    {
+        Unused,
+        Select,
+        ZoomIn,
+        ZoomOut,
+        Pan,
     }
 }

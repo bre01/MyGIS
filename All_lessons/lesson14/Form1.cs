@@ -15,6 +15,12 @@ namespace lesson14
 {
     public partial class Form1 : Form
     {
+        MOUSECOMMAND _mouseCommand = MOUSECOMMAND.Pan;
+        int _mouseStartX = 0;
+        int _mouseStartY = 0;
+        int _mouseMovingX = 0;
+        int _mouseMovingY = 0;
+        bool _mouseOnMap = false;
         Layer _layer = null;
         MapAndClientConverter _converter = null;
         Form2 _attributeWindow = null;
@@ -244,7 +250,52 @@ namespace lesson14
         {
             if (_backWindow != null)
             {
-                e.Graphics.DrawImage(_backWindow, 0, 0);
+                //e.Graphics.DrawImage(_backWindow, 0, 0);
+                if (_mouseOnMap)
+                {
+                    if (_mouseCommand == MOUSECOMMAND.Pan)
+                    {
+                        e.Graphics.DrawImage(_backWindow, _mouseMovingX - _mouseStartX, _mouseMovingY - _mouseStartY);
+                    }
+                    else if (_mouseCommand != MOUSECOMMAND.Unused)
+                    {
+                        e.Graphics.DrawImage(_backWindow, 0, 0);
+                        e.Graphics.FillRectangle(new SolidBrush(GISConst.ZoomSelectBoxColor),
+                            new Rectangle(Math.Min(_mouseStartX, _mouseMovingX), Math.Min(_mouseStartY, _mouseMovingY), Math.Abs(_mouseStartX - _mouseMovingX), Math.Abs(_mouseStartX - _mouseMovingX)));
+                    }
+                    else
+                    {
+                        e.Graphics.DrawImage(_backWindow, 0, 0);
+                    }
+                }
+            }
+        }
+
+        private void Form1_MouseDown(object sender, MouseEventArgs e)
+        {
+            _mouseStartX = e.X;
+            _mouseStartY = e.Y;
+            _mouseOnMap = (e.Button == MouseButtons.Left && _mouseCommand != MOUSECOMMAND.Unused);
+        }
+
+        private void Form1_MouseMove(object sender, MouseEventArgs e)
+        {
+            _mouseMovingX = e.X;
+            _mouseMovingY = e.Y;
+            if (_mouseOnMap) Invalidate();
+        }
+
+        private void Form1_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (_layer == null) return;
+            if (_mouseOnMap == false) return;
+            _mouseOnMap = false;
+            switch (_mouseCommand)
+            {
+                case MOUSECOMMAND.Select: break;
+                case MOUSECOMMAND.ZoomIn: break;
+                case MOUSECOMMAND.ZoomOut: break;
+                case MOUSECOMMAND.Pan: break;
             }
         }
     }

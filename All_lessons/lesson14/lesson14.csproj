@@ -48,11 +48,11 @@
   <ItemGroup>
     <Compile Include="BasicClasses.cs" />
     <Compile Include="Document.cs" />
-    <Compile Include="Documents.cs">
+    <Compile Include="DocumentWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Documents.Designer.cs">
-      <DependentUpon>Documents.cs</DependentUpon>
+    <Compile Include="DocumentWindow.Designer.cs">
+      <DependentUpon>DocumentWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -70,8 +70,8 @@
     <Compile Include="MyFiles.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Documents.resx">
-      <DependentUpon>Documents.cs</DependentUpon>
+    <EmbeddedResource Include="DocumentWindow.resx">
+      <DependentUpon>DocumentWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

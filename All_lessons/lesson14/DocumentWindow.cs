@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -11,11 +12,11 @@ using System.Windows.Forms;
 
 namespace lesson14
 {
-    public partial class Documents : Form
+    public partial class DocumentWindow : Form
     {
         GISDocument _document;
         Form1 _mapWindow;
-        public Documents(GISDocument document, Form1 mapWindow)
+        public DocumentWindow(GISDocument document, Form1 mapWindow)
         {
             InitializeComponent();
             _document = document;
@@ -58,6 +59,12 @@ namespace lesson14
 
         private void button1_Click(object sender, EventArgs e)
         {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "GIS Files(*." + GISConst.SHPFILE + ",*." + GISConst.MYFILE + ")|*." + GISConst.SHPFILE + ";*." + GISConst.MYFILE;
+            dialog.RestoreDirectory = false;
+            dialog.FilterIndex = 1;
+            dialog.Multiselect = false;
+            if (dialog.ShowDialog() != DialogResult.OK) return;
 
         }
         private void Clicked(object sender, EventArgs e)

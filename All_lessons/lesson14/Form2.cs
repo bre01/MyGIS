@@ -101,7 +101,7 @@ namespace lesson14
                     _layer.AddSelectedFeatureByID((int)(row.Cells[0].Value));
                 }
             }
-            _mapWindow.UpdateAndDraw();
+            _mapWindow.UpdateConvBarDraw();
 
 
         }

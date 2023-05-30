@@ -142,13 +142,13 @@ namespace lesson14
         private void button3_Click(object sender, EventArgs e)
         {
             if (list.SelectedItem == null) { return; }
-            SaveFileDialog dialog= new SaveFileDialog();
+            SaveFileDialog dialog = new SaveFileDialog();
             dialog.Filter = "GIS file(*." + GISConst.MYFILE + ")|*." + GISConst.MYFILE;
             dialog.FilterIndex = 1;
             dialog.RestoreDirectory = false;
-            if(dialog.ShowDialog() == DialogResult.OK)
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
-                Layer layer=_document.GetLayer(list.SelectedItem.ToString());
+                Layer layer = _document.GetLayer(list.SelectedItem.ToString());
                 MyFiles.WriteFile(layer, dialog.FileName);
                 MessageBox.Show("Done!");
             }
@@ -156,15 +156,33 @@ namespace lesson14
 
         private void button4_Click(object sender, EventArgs e)
         {
-            SaveFileDialog dialog= new SaveFileDialog();
+            SaveFileDialog dialog = new SaveFileDialog();
             dialog.Filter = "GIS Document(*." + GISConst.MYDOC + ")|*." + GISConst.MYDOC;
-            dialog.FilterIndex=1;
+            dialog.FilterIndex = 1;
             dialog.RestoreDirectory = false;
-            if(dialog.ShowDialog()== DialogResult.OK)
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
                 _document.Write(dialog.FileName);
                 MessageBox.Show("Done!");
             }
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if (list.SelectedItem == null) { return; }
+            Layer layer = _document.GetLayer(list.SelectedItem.ToString());
+            _mapWindow.OpenAttributeWindow(layer);
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            _mapWindow.UpdateMapInfo();
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            _mapWindow.UpdateMapInfo();
+            Close();
         }
         //private void DocumentWindowShow(object sender, EventArgs e)
         //{

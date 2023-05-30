@@ -21,7 +21,8 @@ namespace lesson14
         int _mouseMovingX = 0;
         int _mouseMovingY = 0;
         bool _mouseOnMap = false;
-        Layer _layer = null;
+        GISDocument _document=new GISDocument();
+        //Layer _layer = null;
         MapAndClientConverter _converter = null;
         Form2 _attributeWindow = null;
         Bitmap _backWindow;
@@ -43,7 +44,7 @@ namespace lesson14
             _layer = shapefileTools.ReadShapefile(openFileDialog.FileName);
             _layer.DrawAttributeOrNot = false;
             MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
-            UpdateAndDraw();
+            UpdateConvBarDraw();
             shape_box.Text = _layer.ShapeType.ToString();
             x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.Extent.minX(), _layer.Extent.maxX());
             y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.Extent.minY(), _layer.Extent.maxY());
@@ -64,9 +65,9 @@ namespace lesson14
             //update map button clicked
             /*_converter.UpdateConverter(_layer.Extent, ClientRectangle);
             DrawMap();*/
-            UpdateAndDraw();
+            UpdateConvBarDraw();
         }
-        public void UpdateAndDraw()
+        public void UpdateConvBarDraw()
         {
 
             _converter.UpdateConverter(_layer.Extent, this.ClientRectangle);
@@ -75,8 +76,33 @@ namespace lesson14
         }
         void UpdateStatusBar()
         {
-            toolStripStatusLabel1.Text = _layer.Selection.Count.ToString();
+            toolStripStatusLabel1.Text = _document.Layers.Count.ToString();
         }
+        public void UpdateMapInfo()
+        {
+            if (_converter == null)
+            {
+                if (_document.IsEmpty()) return;
+                _converter=new MapAndClientConverter(new GISMapExtent(_document.Extent),ClientRectangle);
+            }
+            if(ClientRectangle.Width*ClientRectangle.Height == 0)
+            {
+                return;
+            }
+            _converter.UpdateRectangle(ClientRectangle);
+            if(_backWindow != null)
+            {
+                _backWindow.Dispose();
+            }
+            _backWindow=new Bitmap(ClientRectangle.Width, ClientRectangle.Height);
+            Graphics g=Graphics.FromImage(_backWindow);
+            g.FillRectangle(new SolidBrush(Color.Black), ClientRectangle);
+            _document.Draw(g, _converter);
+            Graphics g2 = CreateGraphics();
+            g2.DrawImage( _backWindow, 0,0);
+            UpdateStatusBar();
+        }
+
 
 
         private void DrawMap()
@@ -152,7 +178,7 @@ namespace lesson14
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
             if (_layer != null)
-                UpdateAndDraw();
+                UpdateConvBarDraw();
         }
 
         private void button9_Click(object sender, EventArgs e)
@@ -219,7 +245,7 @@ namespace lesson14
             SelectResult sr = _layer.Select(vertex, _converter);
             if (sr == SelectResult.Ok)
             {
-                UpdateAndDraw();
+                UpdateConvBarDraw();
                 toolStripStatusLabel1.Text = _layer.Selection.Count.ToString();
                 UpdateAttributeWindow();
             }
@@ -234,7 +260,7 @@ namespace lesson14
         {
             if (_layer == null) return;
             _layer.ClearSelection();
-            UpdateAndDraw();
+            UpdateConvBarDraw();
             toolStripStatusLabel1.Text = "0";
             UpdateAttributeWindow();
         }

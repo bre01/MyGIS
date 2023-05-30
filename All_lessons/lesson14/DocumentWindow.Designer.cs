@@ -184,6 +184,7 @@
             this.button7.TabIndex = 13;
             this.button7.Text = "tables";
             this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // button8
             // 
@@ -203,6 +204,7 @@
             this.button9.TabIndex = 15;
             this.button9.Text = "apply";
             this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // button10
             // 
@@ -212,6 +214,7 @@
             this.button10.TabIndex = 16;
             this.button10.Text = "close";
             this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // label2
             // 

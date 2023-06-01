@@ -90,13 +90,13 @@ namespace My.GIS
 
             }
         }
-        public void Draw(Graphics graphics,MapAndClientConverter converter,GISMapExtent extent)
+        public void Draw(Graphics graphics, MapAndClientConverter converter, GISMapExtent extent)
         {
-            for(int i=0; i < _features.Count;i++)
+            for (int i = 0; i < _features.Count; i++)
             {
                 if (extent.IntersectOrNot(_features[i].spatialPart.mapExtent))
                 {
-                    _features[i].Draw(graphics,converter,this.DrawAttributeOrNot,this.LabelIndex);
+                    _features[i].Draw(graphics, converter, this.DrawAttributeOrNot, this.LabelIndex);
                 }
             }
         }
@@ -137,6 +137,23 @@ namespace My.GIS
                 }
             }
             return null;
+        }
+        public SelectResult Select(GISMapExtent extent)
+        {
+            GISSelect gs = new GISSelect();
+            SelectResult sr = gs.Select(extent, _features);
+            if (sr == SelectResult.Ok)
+            {
+                for (int i = 0; i < gs.SelectedFeatures.Count; i++)
+                {
+                    if (gs.SelectedFeatures[i].Selected == false)
+                    {
+                        gs.SelectedFeatures[i].Selected = true;
+                        Selection.Add(gs.SelectedFeatures[i]);
+                    }
+                }
+            }
+            return sr;
         }
 
 

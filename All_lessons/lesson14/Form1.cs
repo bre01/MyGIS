@@ -15,7 +15,7 @@ namespace lesson14
 {
     public partial class Form1 : Form
     {
-        MOUSECOMMAND _mouseCommand = MOUSECOMMAND.Pan;
+        MOUSECOMMAND _mouseCommand = MOUSECOMMAND.Select;
         int _mouseStartX = 0;
         int _mouseStartY = 0;
         int _mouseMovingX = 0;
@@ -292,7 +292,25 @@ namespace lesson14
             _mouseOnMap = false;
             switch (_mouseCommand)
             {
-                case MOUSECOMMAND.Select: break;
+                case MOUSECOMMAND.Select:
+                    if (Control.ModifierKeys != Keys.Control) _layer.ClearSelection();
+                    SelectResult sr = SelectResult.UnknownType;
+                    if (e.X == _mouseStartX && e.Y == _mouseStartY)
+                    {
+                        GISVertex v = _converter.ToMapVertex(new Point(e.X, e.Y));
+                        sr = _layer.Select(v, _converter);
+                    }
+                    else
+                    {
+                        GISMapExtent extent = _converter.RectToExtent(e.X, _mouseStartX, e.Y, _mouseStartY);
+                        sr = _layer.Select(extent);
+                    }
+                    if (sr == SelectResult.Ok || Control.ModifierKeys != Keys.Control)
+                    {
+                        UpdateAndDraw();
+                        UpdateAttributeWindow();
+                    }
+                    break;
                 case MOUSECOMMAND.ZoomIn: break;
                 case MOUSECOMMAND.ZoomOut: break;
                 case MOUSECOMMAND.Pan: break;

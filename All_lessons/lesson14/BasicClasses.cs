@@ -260,6 +260,11 @@ namespace My.GIS
             MapUpRight.CopyVertex(extent.MapUpRight);
             MapBottomLeft.CopyVertex(extent.MapBottomLeft);
         }
+        public bool Include(GISMapExtent extent)
+        {
+            return (maxX() >= extent.maxX() && minX() <= extent.minX()
+                && maxY() >= extent.maxY() && minY() <= extent.minY());
+        }
         public GISMapExtent(GISVertex bottomLeft, GISVertex upRight)
         {
             MapBottomLeft = bottomLeft;
@@ -377,6 +382,12 @@ namespace My.GIS
             _currentMapExtent.CopyExtent(extent);
             UpdateConverter(_currentMapExtent, _clientWindowRectangle);
         }*/
+        public GISMapExtent RectToExtent(int x1, int x2, int y1, int y2)
+        {
+            GISVertex v1 = ToMapVertex(new Point(x1, y1));
+            GISVertex v2 = ToMapVertex(new Point(x2, y2));
+            return new GISMapExtent(v1.x, v2.x, v1.y, v2.y);
+        }
 
         public MapAndClientConverter(GISMapExtent extent, Rectangle clientWindowRectangle)// current map extent and the client rectangle
         {
@@ -866,6 +877,19 @@ namespace My.GIS
                 case S.Polygon: return SelectPolygon(vertex, features, converter, minSelectExtent);
             }
             return SelectResult.UnknownType;
+        }
+        public SelectResult Select(GISMapExtent extent, List<GISFeature> features)
+        {
+            SelectedFeatures.Clear();
+            for (int i = 0; i < features.Count; i++)
+            {
+                if (extent.Include(features[i].spatialPart.mapExtent))
+                {
+                    SelectedFeatures.Add(features[i]);
+                }
+            }
+            return (SelectedFeatures.Count > 0) ? SelectResult.Ok : SelectResult.TooFar;
+
         }
         public GISMapExtent BuildExtent(GISVertex vertex, MapAndClientConverter converter)
         {

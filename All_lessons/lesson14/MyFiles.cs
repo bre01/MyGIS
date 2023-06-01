@@ -24,10 +24,10 @@ namespace My.GIS
         static void WriteFileHeader(Layer layer, BinaryWriter binaryWriter)
         {
             MyFileHeader myFileHeader = new MyFileHeader();
-            myFileHeader.MinX = layer.Extent.minX();
-            myFileHeader.MinY = layer.Extent.minY();
-            myFileHeader.MaxX = layer.Extent.maxX();
-            myFileHeader.MaxY = layer.Extent.maxY();
+            myFileHeader.MinX = layer.ModifyExtent.minX();
+            myFileHeader.MinY = layer.ModifyExtent.minY();
+            myFileHeader.MaxX = layer.ModifyExtent.maxX();
+            myFileHeader.MaxY = layer.ModifyExtent.maxY();
             myFileHeader.FeatureCount = layer.FeatureCount();
             myFileHeader.ShapeType = (int)layer.ShapeType;
             myFileHeader.FieldCount = layer.Fields.Count();

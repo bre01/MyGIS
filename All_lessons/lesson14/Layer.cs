@@ -17,7 +17,8 @@ namespace My.GIS
         /// if it's camelCase,  it's local variable or parameter (of the method)
         /// </naming_convention>
         public string Name;
-        public GISMapExtent Extent;
+        public GISMapExtent ModifyExtent;
+        public GISMapExtent OriginalExtent; 
         public bool DrawAttributeOrNot = false;
         public int LabelIndex;
         public S ShapeType;
@@ -33,14 +34,18 @@ namespace My.GIS
         {
             this.Name = name;
             ShapeType = shapeType;
-            Extent = extent;
+            if (OriginalExtent == null) 
+                OriginalExtent= extent;
+            ModifyExtent = extent;
             Fields = new List<GISField>();
         }
         public Layer(string name, S shapeType, GISMapExtent extent, List<GISField> fields)
         {
             Name = name;
             ShapeType = shapeType;
-            Extent = extent;
+            if(OriginalExtent==null)
+                OriginalExtent=extent;
+            ModifyExtent = extent;
             Fields = fields;
         }
         public SelectResult Select(GISVertex vertex, MapAndClientConverter converter)

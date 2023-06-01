@@ -45,8 +45,10 @@ namespace lesson14
             MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
             UpdateAndDraw();
             shape_box.Text = _layer.ShapeType.ToString();
-            x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.Extent.minX(), _layer.Extent.maxX());
-            y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.Extent.minY(), _layer.Extent.maxY());
+            x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minX(), _layer.OriginalExtent.maxX());
+            y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minY(), _layer.OriginalExtent.maxY());
+            displayX.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minX(), _layer.OriginalExtent.maxX());
+            displayY.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minY(), _layer.OriginalExtent.maxY());
 
             /*_converter.UpdateConverter(_layer.Extent,ClientRectangle);
             DrawMap();*/
@@ -69,13 +71,17 @@ namespace lesson14
         public void UpdateAndDraw()
         {
 
-            _converter.UpdateConverter(_layer.Extent, this.ClientRectangle);
+            _converter.UpdateConverter(_layer.ModifyExtent, this.ClientRectangle);
             DrawMap();
             UpdateStatusBar();
         }
         void UpdateStatusBar()
         {
             toolStripStatusLabel1.Text = _layer.Selection.Count.ToString();
+            x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minX(), _layer.OriginalExtent.maxX());
+            y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minY(), _layer.OriginalExtent.maxY());
+            displayX.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.ModifyExtent.minX(), _layer.ModifyExtent.maxX());
+            displayY.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.ModifyExtent.minY(), _layer.ModifyExtent.maxY());
         }
 
 
@@ -85,7 +91,7 @@ namespace lesson14
             {
                 return;
             }
-            _converter.UpdateConverter(_layer.Extent, this.ClientRectangle);
+            _converter.UpdateConverter(_layer.ModifyExtent, this.ClientRectangle);
             if (_backWindow != null)
             {
                 _backWindow.Dispose();
@@ -188,7 +194,7 @@ namespace lesson14
             string fileName = dialog.FileName;
             _layer = MyFiles.ReadFile(fileName);
             MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
-            _converter.UpdateConverter(_layer.Extent, ClientRectangle);
+            _converter.UpdateConverter(_layer.ModifyExtent, ClientRectangle);
             DrawMap();
 
         }
@@ -206,23 +212,6 @@ namespace lesson14
         private void Form1_MouseClick(object sender, MouseEventArgs e)
         {
 
-            if (_layer == null) return;
-            GISVertex vertex = _converter.ToMapVertex(new Point(e.X, e.Y));
-            //GISSelect gs = new GISSelect();
-            //if (gs.Select(vertex, _layer.GetAllFeatures(), _layer.ShapeType, _converter) == SelectResult.Ok)
-            //{
-            //    if (_layer.ShapeType == S.Polygon)
-            //        MessageBox.Show(gs.SelectedFeatures[0].GetAttribute(0).ToString());
-            //    else
-            //        MessageBox.Show(gs.SelectedFeature.GetAttribute(0).ToString());
-            //}
-            SelectResult sr = _layer.Select(vertex, _converter);
-            if (sr == SelectResult.Ok)
-            {
-                UpdateAndDraw();
-                toolStripStatusLabel1.Text = _layer.Selection.Count.ToString();
-                UpdateAttributeWindow();
-            }
         }
 
         private void label3_Click_1(object sender, EventArgs e)

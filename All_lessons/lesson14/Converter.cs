@@ -9,12 +9,13 @@ namespace My.GIS
 {
     public class MapAndClientConverter
     {
-        GISMapExtent _currentMapExtent;
+        GISMapExtent _layerMapExtent;
+        GISMapExtent _displayMapExtent;
         //public string MyProptery { get; set; }
         Rectangle _clientWindowRectangle;
-        double mapMinX, mapMinY;
+        double mapDisplayMinXCoo, mapDisplayMinYCoo, mapDisplayMaxXCoo, mapDisplayMaxYCoo;
         int clientWindowHeight, clientWindowWidth;
-        double mapW, mapH;
+        double mapCooW, mapCooH;
         double scaleX, scaleY;
         //I just don't understand the point of CopyExtent
         //I just use the updateConverter Method, it update both two 
@@ -24,6 +25,7 @@ namespace My.GIS
             _currentMapExtent.CopyExtent(extent);
             UpdateConverter(_currentMapExtent, _clientWindowRectangle);
         }*/
+        public GISMapExtent GetLayerExtent() { return _layerMapExtent; }
         public GISMapExtent RectToExtent(int x1, int x2, int y1, int y2)
         {
             GISVertex v1 = ToMapVertex(new Point(x1, y1));
@@ -38,7 +40,7 @@ namespace My.GIS
 
         public void UpdateConverter(GISMapExtent extent, Rectangle rectangle)
         {
-            _currentMapExtent = extent;
+            _layerMapExtent = extent;
             _clientWindowRectangle = rectangle;
             //mapMinX = _currentMapExtent.minX();
             //mapMinY = _currentMapExtent.minY();
@@ -46,30 +48,34 @@ namespace My.GIS
             clientWindowHeight = rectangle.Height;
             //mapW = _currentMapExtent.width();
             //mapH = _currentMapExtent.height();
-            scaleX = _currentMapExtent.width() / clientWindowWidth;
-            scaleY = _currentMapExtent.height() / clientWindowHeight;
+            scaleX = _layerMapExtent.width() / clientWindowWidth;
+            scaleY = _layerMapExtent.height() / clientWindowHeight;
             scaleX = Math.Max(scaleX, scaleY);
             scaleY = scaleX;
-            mapW = _clientWindowRectangle.Width * scaleX;
-            mapH = _clientWindowRectangle.Height * scaleY;
-            GISVertex center = _currentMapExtent.GetCenter();
-            mapMinX = center.x - mapW / 2;
-            mapMinY = center.y - mapH / 2;
+            mapCooW = _clientWindowRectangle.Width * scaleX;
+            mapCooH = _clientWindowRectangle.Height * scaleY;
+            GISVertex center = _layerMapExtent.GetCenter();
+            mapDisplayMinXCoo = center.x - mapCooW / 2;
+            mapDisplayMinYCoo = center.y - mapCooH / 2;
+            mapDisplayMaxXCoo = center.x + mapCooW / 2;
+            mapDisplayMaxYCoo = center.y + mapCooH / 2;
+            _displayMapExtent = new GISMapExtent(mapDisplayMinXCoo, mapDisplayMaxXCoo, mapDisplayMinYCoo, mapDisplayMaxYCoo);
         }
         public GISMapExtent GetDisplayExtent()
         {
-            return new GISMapExtent(mapMinX, mapMinX + mapW, mapMinY, mapMinY + mapH);
+            //return new GISMapExtent(mapDisplayMinXCoo, mapDisplayMinXCoo + mapCooW, mapDisplayMinYCoo, mapDisplayMinYCoo + mapCooH);
+            return _displayMapExtent;
         }
         public void UpdateDisplayExtent(GISMapExtent extent)
         {
-            UpdateConverter(extent, _clientWindowRectangle);
+            _displayMapExtent = extent;
         }
 
 
         public Point ToScreenPoint(GISVertex vertex)
         {
-            double screenX = (vertex.x - mapMinX) / scaleX;
-            double screenY = clientWindowHeight - (vertex.y - mapMinY) / scaleY;
+            double screenX = (vertex.x - mapDisplayMinXCoo) / scaleX;
+            double screenY = clientWindowHeight - (vertex.y - mapDisplayMinYCoo) / scaleY;
             return new Point((int)screenX, (int)screenY);
         }
         public double ToScreenDistance(GISVertex v1, GISVertex v2)
@@ -84,14 +90,14 @@ namespace My.GIS
         }
         public GISVertex ToMapVertex(Point point)
         {
-            double MapX = scaleX * point.X + mapMinX;
-            double MapY = scaleY * (clientWindowHeight - point.Y) + mapMinY;
+            double MapX = scaleX * point.X + mapDisplayMinXCoo;
+            double MapY = scaleY * (clientWindowHeight - point.Y) + mapDisplayMinYCoo;
             return new GISVertex(MapX, MapY);
         }
         public void ChangeView(GISMapActions mapAction)
         {
-            _currentMapExtent.ChangeExtent(mapAction);
-            UpdateConverter(_currentMapExtent, _clientWindowRectangle);
+            _layerMapExtent.ChangeExtent(mapAction);
+            UpdateConverter(_layerMapExtent, _clientWindowRectangle);
         }
     }
 

@@ -71,10 +71,10 @@ namespace My.GIS
             {
                 return;
             }
-            _extent = new GISMapExtent(Layers[0].Extent);
+            _extent = new GISMapExtent(Layers[0].ModifyExtent);
             for (int i = 0; i < Layers.Count; i++)
             {
-                _extent.Merge(Layers[i].Extent);
+                _extent.Merge(Layers[i].ModifyExtent);
 
             }
         }

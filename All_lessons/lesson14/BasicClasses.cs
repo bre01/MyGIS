@@ -256,6 +256,8 @@ namespace My.GIS
         //map coordinates is the real coordinates
         public GISVertex MapBottomLeft;
         public GISVertex MapUpRight;
+        public GISVertex DisplayBL;
+        public GISVertex DisplayUR;
         public void CopyExtent(GISMapExtent extent)
         {
             MapUpRight.CopyVertex(extent.MapUpRight);

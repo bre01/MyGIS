@@ -26,7 +26,7 @@ namespace My.GIS
             UpdateConverter(_currentMapExtent, _clientWindowRectangle);
         }*/
         public GISMapExtent GetLayerExtent() { return _layerMapExtent; }
-        public GISMapExtent RectToExtent(int x1, int x2, int y1, int y2)
+        public GISMapExtent ScreenRectToExtent(int x1, int x2, int y1, int y2)
         {
             GISVertex v1 = ToMapVertex(new Point(x1, y1));
             GISVertex v2 = ToMapVertex(new Point(x2, y2));
@@ -59,16 +59,16 @@ namespace My.GIS
             mapDisplayMinYCoo = center.y - mapCooH / 2;
             mapDisplayMaxXCoo = center.x + mapCooW / 2;
             mapDisplayMaxYCoo = center.y + mapCooH / 2;
-            _displayMapExtent = new GISMapExtent(mapDisplayMinXCoo, mapDisplayMaxXCoo, mapDisplayMinYCoo, mapDisplayMaxYCoo);
+            //_displayMapExtent = new GISMapExtent(mapDisplayMinXCoo, mapDisplayMaxXCoo, mapDisplayMinYCoo, mapDisplayMaxYCoo);
         }
         public GISMapExtent GetDisplayExtent()
         {
             //return new GISMapExtent(mapDisplayMinXCoo, mapDisplayMinXCoo + mapCooW, mapDisplayMinYCoo, mapDisplayMinYCoo + mapCooH);
-            return _displayMapExtent;
+            return _layerMapExtent;
         }
         public void UpdateDisplayExtent(GISMapExtent extent)
         {
-            _displayMapExtent = extent;
+            UpdateConverter(extent, _clientWindowRectangle);
         }
 
 

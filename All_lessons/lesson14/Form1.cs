@@ -47,8 +47,8 @@ namespace lesson14
             shape_box.Text = _layer.ShapeType.ToString();
             x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minX(), _layer.OriginalExtent.maxX());
             y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minY(), _layer.OriginalExtent.maxY());
-            displayX.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minX(), _layer.OriginalExtent.maxX());
-            displayY.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minY(), _layer.OriginalExtent.maxY());
+            displayX.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _converter.GetDisplayExtent().minX(), _converter.GetDisplayExtent().maxX());
+            displayY.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _converter.GetDisplayExtent().minY(), _converter.GetDisplayExtent().maxY());
 
             /*_converter.UpdateConverter(_layer.Extent,ClientRectangle);
             DrawMap();*/
@@ -71,7 +71,7 @@ namespace lesson14
         public void UpdateAndDraw()
         {
 
-            _converter.UpdateConverter(_layer.ModifyExtent, this.ClientRectangle);
+            _converter.UpdateConverter(_layer.DisplayExtent, this.ClientRectangle);
             DrawMap();
             UpdateStatusBar();
         }
@@ -80,8 +80,8 @@ namespace lesson14
             toolStripStatusLabel1.Text = _layer.Selection.Count.ToString();
             x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minX(), _layer.OriginalExtent.maxX());
             y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minY(), _layer.OriginalExtent.maxY());
-            displayX.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.ModifyExtent.minX(), _layer.ModifyExtent.maxX());
-            displayY.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.ModifyExtent.minY(), _layer.ModifyExtent.maxY());
+            displayX.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.DisplayExtent.minX(), _layer.DisplayExtent.maxX());
+            displayY.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.DisplayExtent.minY(), _layer.DisplayExtent.maxY());
         }
 
 
@@ -91,7 +91,7 @@ namespace lesson14
             {
                 return;
             }
-            _converter.UpdateConverter(_layer.ModifyExtent, this.ClientRectangle);
+            //_converter.UpdateConverter(_layer.DisplayExtent, this.ClientRectangle);
             if (_backWindow != null)
             {
                 _backWindow.Dispose();
@@ -194,7 +194,7 @@ namespace lesson14
             string fileName = dialog.FileName;
             _layer = MyFiles.ReadFile(fileName);
             MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
-            _converter.UpdateConverter(_layer.ModifyExtent, ClientRectangle);
+            _converter.UpdateConverter(_layer.DisplayExtent, ClientRectangle);
             DrawMap();
 
         }
@@ -250,7 +250,7 @@ namespace lesson14
                     {
                         e.Graphics.DrawImage(_backWindow, 0, 0);
                         e.Graphics.FillRectangle(new SolidBrush(GISConst.ZoomSelectBoxColor),
-                            new Rectangle(Math.Min(_startX, _mouseMovingX), Math.Min(_startY, _mouseMovingY), Math.Abs(_startX - _mouseMovingX), Math.Abs(_startX - _mouseMovingX)));
+                            new Rectangle(Math.Min(_startX, _mouseMovingX), Math.Min(_startY, _mouseMovingY), Math.Abs(_startX - _mouseMovingX), Math.Abs(_startY - _mouseMovingY)));
                     }
                     else
                     {
@@ -291,7 +291,7 @@ namespace lesson14
                     }
                     else
                     {
-                        GISMapExtent extent = _converter.RectToExtent(e.X, _startX, e.Y, _startY);
+                        GISMapExtent extent = _converter.ScreenRectToExtent(e.X, _startX, e.Y, _startY);
                         sr = _layer.Select(extent);
                     }
                     if (sr == SelectResult.Ok || Control.ModifierKeys != Keys.Control)
@@ -309,13 +309,17 @@ namespace lesson14
                         double newHeight = e1.Height * GISConst.ZoomInFactor;
                         double newMinX = mouseOnMapLocation.x - (mouseOnMapLocation.x - e1.MinX) * GISConst.ZoomInFactor;
                         double newMinY = mouseOnMapLocation.y - (mouseOnMapLocation.y - e1.MinY) * GISConst.ZoomInFactor;
+                        // _layer.DisplayExtent = new GISMapExtent(newMinX, newMinX + newWidth, newMinY, newMinY + newHeight);
                         _converter.UpdateDisplayExtent(new GISMapExtent(newMinX, newMinX + newWidth, newMinY, newMinY + newHeight));
                     }
                     else
                     {
-                        _converter.UpdateDisplayExtent(_converter.RectToExtent(e.X, _startX, e.Y, _startY));
+                        //_layer.DisplayExtent = _converter.ScreenRectToExtent(e.X, _startX, e.Y, _startY);
+                        _converter.UpdateDisplayExtent(_converter.ScreenRectToExtent(e.X, _startX, e.Y, _startY));
                     }
-                    UpdateAndDraw();
+                    //UpdateAndDraw();
+                    DrawMap();
+                    UpdateStatusBar();
                     break;
                 case MOUSECOMMAND.ZoomOut: break;
                 case MOUSECOMMAND.Pan: break;

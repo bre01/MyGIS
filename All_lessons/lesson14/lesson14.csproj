@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicClasses.cs" />
+    <Compile Include="Converter.cs" />
     <Compile Include="Document.cs" />
     <Compile Include="DocumentWindow.cs">
       <SubType>Form</SubType>

@@ -15,9 +15,9 @@ namespace lesson14
 {
     public partial class Form1 : Form
     {
-        MOUSECOMMAND _mouseCommand = MOUSECOMMAND.Select;
-        int _mouseStartX = 0;
-        int _mouseStartY = 0;
+        MOUSECOMMAND _mouseCommand = MOUSECOMMAND.ZoomIn;
+        int _startX = 0;
+        int _startY = 0;
         int _mouseMovingX = 0;
         int _mouseMovingY = 0;
         bool _mouseOnMap = false;
@@ -255,13 +255,13 @@ namespace lesson14
                 {
                     if (_mouseCommand == MOUSECOMMAND.Pan)
                     {
-                        e.Graphics.DrawImage(_backWindow, _mouseMovingX - _mouseStartX, _mouseMovingY - _mouseStartY);
+                        e.Graphics.DrawImage(_backWindow, _mouseMovingX - _startX, _mouseMovingY - _startY);
                     }
                     else if (_mouseCommand != MOUSECOMMAND.Unused)
                     {
                         e.Graphics.DrawImage(_backWindow, 0, 0);
                         e.Graphics.FillRectangle(new SolidBrush(GISConst.ZoomSelectBoxColor),
-                            new Rectangle(Math.Min(_mouseStartX, _mouseMovingX), Math.Min(_mouseStartY, _mouseMovingY), Math.Abs(_mouseStartX - _mouseMovingX), Math.Abs(_mouseStartX - _mouseMovingX)));
+                            new Rectangle(Math.Min(_startX, _mouseMovingX), Math.Min(_startY, _mouseMovingY), Math.Abs(_startX - _mouseMovingX), Math.Abs(_startX - _mouseMovingX)));
                     }
                     else
                     {
@@ -273,8 +273,8 @@ namespace lesson14
 
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
-            _mouseStartX = e.X;
-            _mouseStartY = e.Y;
+            _startX = e.X;
+            _startY = e.Y;
             _mouseOnMap = (e.Button == MouseButtons.Left && _mouseCommand != MOUSECOMMAND.Unused);
         }
 
@@ -295,14 +295,14 @@ namespace lesson14
                 case MOUSECOMMAND.Select:
                     if (Control.ModifierKeys != Keys.Control) _layer.ClearSelection();
                     SelectResult sr = SelectResult.UnknownType;
-                    if (e.X == _mouseStartX && e.Y == _mouseStartY)
+                    if (e.X == _startX && e.Y == _startY)
                     {
                         GISVertex v = _converter.ToMapVertex(new Point(e.X, e.Y));
                         sr = _layer.Select(v, _converter);
                     }
                     else
                     {
-                        GISMapExtent extent = _converter.RectToExtent(e.X, _mouseStartX, e.Y, _mouseStartY);
+                        GISMapExtent extent = _converter.RectToExtent(e.X, _startX, e.Y, _startY);
                         sr = _layer.Select(extent);
                     }
                     if (sr == SelectResult.Ok || Control.ModifierKeys != Keys.Control)
@@ -311,7 +311,23 @@ namespace lesson14
                         UpdateAttributeWindow();
                     }
                     break;
-                case MOUSECOMMAND.ZoomIn: break;
+                case MOUSECOMMAND.ZoomIn:
+                    if (e.X == _startX && e.Y == _startY)
+                    {
+                        GISVertex mouseOnMapLocation = _converter.ToMapVertex(new Point(e.X, e.Y));
+                        GISMapExtent e1 = _converter.GetDisplayExtent();
+                        double newWidth = e1.Width * GISConst.ZoomInFactor;
+                        double newHeight = e1.Height * GISConst.ZoomInFactor;
+                        double newMinX = mouseOnMapLocation.x - (mouseOnMapLocation.x - e1.MinX) * GISConst.ZoomInFactor;
+                        double newMinY = mouseOnMapLocation.y - (mouseOnMapLocation.y - e1.MinY) * GISConst.ZoomInFactor;
+                        _converter.UpdateDisplayExtent(new GISMapExtent(newMinX, newMinX + newWidth, newMinY, newMinY + newHeight));
+                    }
+                    else
+                    {
+                        _converter.UpdateDisplayExtent(_converter.RectToExtent(e.X, _startX, e.Y, _startY));
+                    }
+                    UpdateAndDraw();
+                    break;
                 case MOUSECOMMAND.ZoomOut: break;
                 case MOUSECOMMAND.Pan: break;
             }

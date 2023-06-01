@@ -10,6 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Policy;
 using System.Text;
@@ -292,8 +293,50 @@ namespace My.GIS
         }
         // these all all properties, which I didn'e even notice, I'm so stupid
         public double minX() { return MapBottomLeft.x; }
-        public double maxX() { return MapUpRight.x; }
+        public double MinX
+        {
+            get
+            { return MapBottomLeft.x; }
 
+            set
+            {
+
+            }
+        }
+        public double MaxX
+        {
+            get
+            {
+                return MapUpRight.x;
+            }
+            set
+            {
+
+            }
+        }
+        public double MinY
+        {
+            get { return MapBottomLeft.y; }
+            set
+            {
+            }
+        }
+        public double MaxY
+        {
+            get { return MapUpRight.y; }
+            set { }
+        }
+        public double Width
+        {
+            get { return MapUpRight.x - MapBottomLeft.x; }
+            set { }
+        }
+        public double Height
+        {
+            get { return MapUpRight.y - MapBottomLeft.y; }
+            set { }
+        }
+        public double maxX() { return MapUpRight.x; }
         public double minY() { return MapBottomLeft.y; }
         public double maxY() { return MapUpRight.y; }
         public double width() { return MapUpRight.x - MapBottomLeft.x; }
@@ -365,6 +408,7 @@ namespace My.GIS
         }
 
     }
+    /*
     public class MapAndClientConverter
     {
         GISMapExtent _currentMapExtent;
@@ -381,7 +425,7 @@ namespace My.GIS
         {
             _currentMapExtent.CopyExtent(extent);
             UpdateConverter(_currentMapExtent, _clientWindowRectangle);
-        }*/
+        }
         public GISMapExtent RectToExtent(int x1, int x2, int y1, int y2)
         {
             GISVertex v1 = ToMapVertex(new Point(x1, y1));
@@ -413,14 +457,16 @@ namespace My.GIS
             GISVertex center = _currentMapExtent.GetCenter();
             mapMinX = center.x - mapW / 2;
             mapMinY = center.y - mapH / 2;
-
-
-
         }
-        public GISMapExtent GetRealExtent()
+        public GISMapExtent GetDisplayExtent()
         {
             return new GISMapExtent(mapMinX, mapMinX + mapW, mapMinY, mapMinY + mapH);
         }
+        public void UpdateDisplayExtent(GISMapExtent extent)
+        {
+            UpdateConverter(extent, _clientWindowRectangle);
+        }
+        
 
         public Point ToScreenPoint(GISVertex vertex)
         {
@@ -450,6 +496,7 @@ namespace My.GIS
             UpdateConverter(_currentMapExtent, _clientWindowRectangle);
         }
     }
+    */
     public enum GISMapActions
     {
         zoomin, zoomout,
@@ -1007,6 +1054,8 @@ namespace My.GIS
         public static string MYFILE = "gis";
         public static string MYDOC = "mydoc";
         public static Color ZoomSelectBoxColor = Color.FromArgb(50, 255, 0, 0);
+        public static double ZoomInFactor = 0.8;
+
     }
     public enum MOUSECOMMAND
     {

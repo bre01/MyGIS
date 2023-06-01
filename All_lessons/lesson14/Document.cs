@@ -81,7 +81,7 @@ namespace My.GIS
         public void Draw(Graphics graphics, MapAndClientConverter converter)
         {
             if (Layers.Count == 0) return;
-            GISMapExtent displayExtent = converter.GetRealExtent();
+            GISMapExtent displayExtent = converter.GetDisplayExtent();
             for (int i = 0; i < Layers.Count; i++)
             {
                 if (Layers[i].Visible)

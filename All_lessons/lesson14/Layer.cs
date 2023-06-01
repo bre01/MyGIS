@@ -79,7 +79,7 @@ namespace My.GIS
         }
         public void Draw(Graphics graphics, MapAndClientConverter converter)
         {
-            GISMapExtent extent = converter.GetRealExtent();
+            GISMapExtent extent = converter.GetDisplayExtent();
             for (int i = 0; i < _features.Count; i++)
             {
                 if (extent.IntersectOrNot(_features[i].spatialPart.mapExtent))

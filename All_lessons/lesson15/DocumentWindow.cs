@@ -69,7 +69,9 @@ namespace lesson15
             Layer layer = _document.AddLayer(dialog.FileName);
             list.Items.Insert(0, layer.Name);
             list.SelectedIndex = 0;
-
+            _mapWindow.UpdateAndDraw();
+            //_mapWindow.UpdateAndDraw();
+            
         }
         private void Clicked(object sender, EventArgs e)
         {

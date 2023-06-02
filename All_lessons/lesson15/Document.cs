@@ -51,6 +51,7 @@ namespace My.GIS
             GetUniqueName(layer);
             Layers.Add(layer);
             UpdateExtent();
+            
             return layer;
 
         }
@@ -78,15 +79,14 @@ namespace My.GIS
         public void UpdateExtent()
         {
             _extent = null;
-            if (Layers.Count > 0)
+            if (Layers.Count == 0)
             {
                 return;
             }
             _extent = new GISMapExtent(Layers[0].DisplayExtent);
-            for (int i = 0; i < Layers.Count; i++)
+            for (int i = 1; i < Layers.Count; i++)
             {
                 _extent.Merge(Layers[i].DisplayExtent);
-
             }
         }
         public void Draw(Graphics graphics, MapAndClientConverter converter)

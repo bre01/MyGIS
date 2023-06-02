@@ -35,22 +35,22 @@ namespace lesson15
 
         private void button1_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Shapefile file |*.shp";
-            openFileDialog.RestoreDirectory = false;
-            openFileDialog.FilterIndex = 1;
-            openFileDialog.Multiselect = false;
-            if (openFileDialog.ShowDialog() != DialogResult.OK) return;
-            ShapefileTools shapefileTools = new ShapefileTools();
-            _layer = shapefileTools.ReadShapefile(openFileDialog.FileName);
-            _layer.DrawAttributeOrNot = false;
-            MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
-            UpdateAndDraw();
-            shape_box.Text = _layer.ShapeType.ToString();
-            x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minX(), _layer.OriginalExtent.maxX());
-            y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minY(), _layer.OriginalExtent.maxY());
-            displayX.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _converter.GetDisplayExtent().minX(), _converter.GetDisplayExtent().maxX());
-            displayY.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _converter.GetDisplayExtent().minY(), _converter.GetDisplayExtent().maxY());
+            //OpenFileDialog openFileDialog = new OpenFileDialog();
+            //openFileDialog.Filter = "Shapefile file |*.shp";
+            //openFileDialog.RestoreDirectory = false;
+            //openFileDialog.FilterIndex = 1;
+            //openFileDialog.Multiselect = false;
+            //if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+            //ShapefileTools shapefileTools = new ShapefileTools();
+            //_layer = shapefileTools.ReadShapefile(openFileDialog.FileName);
+            //_layer.DrawAttributeOrNot = false;
+            //MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
+            //UpdateAndDraw();
+            //shape_box.Text = _layer.ShapeType.ToString();
+            //x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minX(), _layer.OriginalExtent.maxX());
+            //y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minY(), _layer.OriginalExtent.maxY());
+            //displayX.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _converter.GetDisplayExtent().minX(), _converter.GetDisplayExtent().maxX());
+            //displayY.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _converter.GetDisplayExtent().minY(), _converter.GetDisplayExtent().maxY());
 
             
             /*_converter.UpdateConverter(_layer.Extent,ClientRectangle);
@@ -83,12 +83,17 @@ namespace lesson15
             DrawMap();
             UpdateStatusBar();
         }
+        public void Uu()
+        {
+            DrawMap();
+            UpdateStatusBar();
+        }
         void UpdateStatusBar()
         {
             //toolStripStatusLabel1.Text = _layer.Selection.Count.ToString();
             toolStripStatusLabel1.Text=_document.Layers.Count.ToString();
-            x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minX(), _layer.OriginalExtent.maxX());
-            y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minY(), _layer.OriginalExtent.maxY());
+            x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _document.Extent.minX(), _document.Extent.maxX());
+            y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _document.Extent.minY(), _document.Extent.maxY());
             displayX.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _converter.GetDisplayExtent().minX(), _converter.GetDisplayExtent().maxX());
             displayY.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _converter.GetDisplayExtent().minY(), _converter.GetDisplayExtent().maxY());
         }
@@ -101,7 +106,7 @@ namespace lesson15
                 return;
             }
             //_converter.UpdateConverter(_layer.DisplayExtent, this.ClientRectangle);
-            _converter.UpdateRectangle(ClientRectangle);
+            _converter.UpdateRectangle(_document.Extent,ClientRectangle);
             if (_backWindow != null)
             {
                 _backWindow.Dispose();
@@ -214,22 +219,22 @@ namespace lesson15
 
         private void button10_Click(object sender, EventArgs e)
         {
-            SaveFileDialog dialog = new SaveFileDialog();
-            if (dialog.ShowDialog() != DialogResult.OK) return;
-            string fileName = dialog.FileName;
-            MyFiles.WriteFile(_layer, fileName);
-            MessageBox.Show("done");
+            //SaveFileDialog dialog = new SaveFileDialog();
+            //if (dialog.ShowDialog() != DialogResult.OK) return;
+            //string fileName = dialog.FileName;
+            //MyFiles.WriteFile(_layer, fileName);
+            //MessageBox.Show("done");
         }
 
         private void button11_Click(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            if (dialog.ShowDialog() != DialogResult.OK) return;
-            string fileName = dialog.FileName;
-            _layer = MyFiles.ReadFile(fileName);
-            MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
-            _converter.UpdateConverter(_layer.DisplayExtent, ClientRectangle);
-            DrawMap();
+            //OpenFileDialog dialog = new OpenFileDialog();
+            //if (dialog.ShowDialog() != DialogResult.OK) return;
+            //string fileName = dialog.FileName;
+            //_layer = MyFiles.ReadFile(fileName);
+            //MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
+            //_converter.UpdateConverter(_layer.DisplayExtent, ClientRectangle);
+            //DrawMap();
 
         }
 
@@ -255,8 +260,8 @@ namespace lesson15
 
         private void button12_Click(object sender, EventArgs e)
         {
-            if (_layer == null) return;
-            _layer.ClearSelection();
+            if (_document.IsEmpty()) return;
+            _document.ClearSelection();
             UpdateAndDraw();
             toolStripStatusLabel1.Text = "0";
             UpdateAttributeWindow();
@@ -410,7 +415,6 @@ namespace lesson15
         }
         private void toolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (_document.IsEmpty()) return;
             if (sender.Equals(openDocumentToolStripMenuItem))
             {
                 OpenFileDialog dialog = new OpenFileDialog();

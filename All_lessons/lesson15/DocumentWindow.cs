@@ -38,7 +38,7 @@ namespace lesson15
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (list.SelectedItems == null) { return; }
+            if (list.SelectedItem == null) { return; }
 
             Layer layer = _document.GetLayer(list.SelectedItem.ToString());
             //layer.Selectable=checkBox1.Checked;
@@ -68,7 +68,7 @@ namespace lesson15
             if (dialog.ShowDialog() != DialogResult.OK) return;
             Layer layer = _document.AddLayer(dialog.FileName);
             list.Items.Insert(0, layer.Name);
-            list.SelectedIndex = 0;
+            list.SelectedIndex = list.Items.Count-1;
             _mapWindow.UpdateAndDraw();
             //_mapWindow.UpdateAndDraw();
             
@@ -124,6 +124,7 @@ namespace lesson15
             list.Items[list.SelectedIndex] = upperName;
             _document.SwitchLayer(selectedName, upperName);
             list.SelectedIndex -= 1;
+            _mapWindow.UpdateAndDraw();
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -140,6 +141,7 @@ namespace lesson15
             list.Items[list.SelectedIndex] = lowerName;
             _document.SwitchLayer(selectedName, lowerName);
             list.SelectedIndex += 1;
+            _mapWindow.UpdateAndDraw();
 
 
         }

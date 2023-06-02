@@ -25,7 +25,7 @@ namespace My.GIS
         }
         public Layer GetLayer(string layerName)
         {
-            for (int i = 0; i < Layers.Count;)
+            for (int i = 0; i < Layers.Count;i++)
             {
                 if (Layers[i].Name == layerName)
                 {

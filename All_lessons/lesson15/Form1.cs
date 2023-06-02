@@ -15,22 +15,55 @@ namespace lesson15
 {
     public partial class Form1 : Form
     {
-        MOUSECOMMAND _mouseCommand = MOUSECOMMAND.Unused;
+        MOUSECOMMAND _mouseCommand = MOUSECOMMAND.Pan;
         int _startX = 0;
         int _startY = 0;
         int _mouseMovingX = 0;
         int _mouseMovingY = 0;
         bool _mouseOnMap = false;
         //Layer _layer = null;
-        GISDocument _document=new GISDocument();
+        GISDocument _document = new GISDocument();
         MapAndClientConverter _converter = null;
         Form2 _attributeWindow = null;
         Dictionary<Layer, Form2> _allAttributeWindow = new Dictionary<Layer, Form2>();
         Bitmap _backWindow;
+
         public Form1()
         {
             InitializeComponent();
             //_converter = new MapAndClientConverter(new GISMapExtent(new GISVertex(0, 0), new GISVertex(100, 100)), ClientRectangle);
+            this.MouseWheel += new MouseEventHandler(Form1_MouseWheel);
+            panToolStripMenuItem.Checked = true;
+        }
+        private void Form1_MouseWheel(object sender, MouseEventArgs e)
+        {
+            int i = e.Delta;
+            textBox2.Text = i.ToString();
+            if (i < 0)
+            {
+
+                GISVertex mouseOnMapLocation = _converter.ToMapVertex(new Point(e.X, e.Y));
+                GISMapExtent e1 = _converter.GetDisplayExtent();
+                double newWidth = e1.Width * GISConst.ZoomInFactor;
+                double newHeight = e1.Height * GISConst.ZoomInFactor;
+                double newMinX = mouseOnMapLocation.x - (mouseOnMapLocation.x - e1.MinX) * GISConst.ZoomInFactor;
+                double newMinY = mouseOnMapLocation.y - (mouseOnMapLocation.y - e1.MinY) * GISConst.ZoomInFactor;
+                // _layer.DisplayExtent = new GISMapExtent(newMinX, newMinX + newWidth, newMinY, newMinY + newHeight);
+                _converter.UpdateDisplayExtent(new GISMapExtent(newMinX, newMinX + newWidth, newMinY, newMinY + newHeight));
+            }
+            else if (i > 0)
+            {
+                GISMapExtent e1 = _converter.GetDisplayExtent();
+                GISVertex mouseOnMapLocation = _converter.ToMapVertex(new Point(e.X, e.Y));
+                double newWidth = e1.Width / GISConst.ZoomOutFactor;
+                double newHeight = e1.Height / GISConst.ZoomOutFactor;
+                double newMinX = mouseOnMapLocation.x - (mouseOnMapLocation.x - e1.MinX) / GISConst.ZoomOutFactor;
+                double newMinY = mouseOnMapLocation.y - (mouseOnMapLocation.y - e1.MinY) / GISConst.ZoomOutFactor;
+                _converter.UpdateDisplayExtent(new GISMapExtent(newMinX, newMinX + newWidth, newMinY, newMinY + newHeight));
+
+            }
+            DrawMap();
+            UpdateStatusBar();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -52,7 +85,7 @@ namespace lesson15
             //displayX.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _converter.GetDisplayExtent().minX(), _converter.GetDisplayExtent().maxX());
             //displayY.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _converter.GetDisplayExtent().minY(), _converter.GetDisplayExtent().maxY());
 
-            
+
             /*_converter.UpdateConverter(_layer.Extent,ClientRectangle);
             DrawMap();*/
 
@@ -78,20 +111,15 @@ namespace lesson15
                 if (_document.IsEmpty()) return;
                 _converter = new MapAndClientConverter(new GISMapExtent(_document.Extent), ClientRectangle);
             }
-            
+            _converter.UpdateConverter(new GISMapExtent(_document.Extent), ClientRectangle);
             //_converter.UpdateConverter(_layer.DisplayExtent, this.ClientRectangle);
-            DrawMap();
-            UpdateStatusBar();
-        }
-        public void Uu()
-        {
             DrawMap();
             UpdateStatusBar();
         }
         void UpdateStatusBar()
         {
             //toolStripStatusLabel1.Text = _layer.Selection.Count.ToString();
-            toolStripStatusLabel1.Text=_document.Layers.Count.ToString();
+            toolStripStatusLabel1.Text = _document.Layers.Count.ToString();
             x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _document.Extent.minX(), _document.Extent.maxX());
             y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _document.Extent.minY(), _document.Extent.maxY());
             displayX.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _converter.GetDisplayExtent().minX(), _converter.GetDisplayExtent().maxX());
@@ -106,7 +134,6 @@ namespace lesson15
                 return;
             }
             //_converter.UpdateConverter(_layer.DisplayExtent, this.ClientRectangle);
-            _converter.UpdateRectangle(_document.Extent,ClientRectangle);
             if (_backWindow != null)
             {
                 _backWindow.Dispose();
@@ -195,24 +222,24 @@ namespace lesson15
         public void OpenAttributeWindow(Layer layer)
         {
             Form2 attributeWindow = null;
-            if(_allAttributeWindow.ContainsKey(layer))
+            if (_allAttributeWindow.ContainsKey(layer))
             {
-                attributeWindow= _allAttributeWindow[layer];
+                attributeWindow = _allAttributeWindow[layer];
                 _allAttributeWindow.Remove(layer);
             }
-            if(attributeWindow == null)
+            if (attributeWindow == null)
             {
-                attributeWindow=new Form2(layer, this);
+                attributeWindow = new Form2(layer, this);
             }
             if (attributeWindow.IsDisposed)
             {
-                attributeWindow=new Form2(layer, this);
+                attributeWindow = new Form2(layer, this);
             }
             _allAttributeWindow.Add(layer, attributeWindow);
-            _attributeWindow.Show();
-            if(attributeWindow.WindowState==FormWindowState.Minimized)
+            attributeWindow.Show();
+            if (attributeWindow.WindowState == FormWindowState.Minimized)
             {
-                _attributeWindow.WindowState=FormWindowState.Normal;
+                _attributeWindow.WindowState = FormWindowState.Normal;
                 _attributeWindow.BringToFront();
             }
         }
@@ -272,9 +299,9 @@ namespace lesson15
             //if (_attributeWindow == null) return;
             //if (_attributeWindow.IsDisposed) return;
             //_attributeWindow.UpdateData();
-            foreach(Form2 attributeWindow in _allAttributeWindow.Values)
+            foreach (Form2 attributeWindow in _allAttributeWindow.Values)
             {
-                if (attributeWindow != null) continue;
+                if (attributeWindow == null) continue;
                 if (attributeWindow.IsDisposed) continue;
                 attributeWindow.UpdateData();
             }
@@ -406,6 +433,16 @@ namespace lesson15
                         UpdateStatusBar();
                     }
                     break;
+                    //case MOUSECOMMAND.Zoom:
+                    //    GISMapExtent e1 = _converter.GetDisplayExtent();
+                    //    GISVertex mouseOnMapLocation = _converter.ToMapVertex(new Point(e.X, e.Y));
+                    //    double newWidth = e1.Width / GISConst.ZoomOutFactor;
+                    //    double newHeight = e1.Height / GISConst.ZoomOutFactor;
+                    //    double newMinX = mouseOnMapLocation.x - (mouseOnMapLocation.x - e1.MinX) / GISConst.ZoomOutFactor;
+                    //    double newMinY = mouseOnMapLocation.y - (mouseOnMapLocation.y - e1.MinY) / GISConst.ZoomOutFactor;
+                    //    _converter.UpdateDisplayExtent(new GISMapExtent(newMinX, newMinX + newWidth, newMinY, newMinY + newHeight));
+                    //    break;
+
             }
         }
 
@@ -444,15 +481,17 @@ namespace lesson15
                 selectToolStripMenuItem.Checked = false;
                 zoomInToolStripMenuItem.Checked = false;
                 zoomOutToolStripMenuItem.Checked = false;
-                panToolStripMenuItem.Checked = false;
+                //panToolStripMenuItem.Checked = false;
                 ((ToolStripMenuItem)sender).Checked = true;
                 if (sender.Equals(zoomInToolStripMenuItem))
                 {
                     _mouseCommand = MOUSECOMMAND.ZoomIn;
+                    panToolStripMenuItem.Checked = false;
                 }
                 else if (sender.Equals(zoomOutToolStripMenuItem))
                 {
                     _mouseCommand = MOUSECOMMAND.ZoomOut;
+                    panToolStripMenuItem.Checked = false;
                 }
                 else if (sender.Equals(panToolStripMenuItem))
                 {
@@ -461,6 +500,7 @@ namespace lesson15
                 else if (sender.Equals(selectToolStripMenuItem))
                 {
                     _mouseCommand = MOUSECOMMAND.Select;
+                    panToolStripMenuItem.Checked = false;
                 }
             }
         }

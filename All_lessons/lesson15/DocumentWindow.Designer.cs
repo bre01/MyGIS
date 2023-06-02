@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.list = new System.Windows.Forms.ListBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
@@ -46,17 +45,8 @@
             this.button9 = new System.Windows.Forms.Button();
             this.button10 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
+            this.list = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
-            // 
-            // list
-            // 
-            this.list.FormattingEnabled = true;
-            this.list.ItemHeight = 25;
-            this.list.Location = new System.Drawing.Point(60, 47);
-            this.list.Name = "list";
-            this.list.Size = new System.Drawing.Size(983, 529);
-            this.list.TabIndex = 0;
-            this.list.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
             // checkBox1
             // 
@@ -225,6 +215,16 @@
             this.label2.TabIndex = 17;
             this.label2.Text = "File path";
             // 
+            // list
+            // 
+            this.list.FormattingEnabled = true;
+            this.list.ItemHeight = 25;
+            this.list.Location = new System.Drawing.Point(60, 47);
+            this.list.Name = "list";
+            this.list.Size = new System.Drawing.Size(983, 529);
+            this.list.TabIndex = 0;
+            this.list.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            // 
             // DocumentWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -258,8 +258,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.ListBox list;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.CheckBox checkBox3;
@@ -277,5 +275,6 @@
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ListBox list;
     }
 }

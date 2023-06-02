@@ -65,12 +65,28 @@ namespace lesson15
         {
             _fromMapWindow = true;
             dataGridView1.ClearSelection();
-            foreach (GISFeature feature in _layer.Selection)
-            {
-                SelectRowByID(feature.ID).Selected = true;
-            }
+
+                foreach (GISFeature feature in _layer.Selection)
+                {
+                    SelectRowByID(feature.ID).Selected = true;
+                }
             _fromMapWindow = false;
         }
+        //public void UpdateData(GISDocument document)
+        //{
+        //    _fromMapWindow = true;
+        //    dataGridView1.ClearSelection();
+        //    foreach(Layer _layer in document.Layers)
+        //    {
+
+        //        foreach (GISFeature feature in _layer.Selection)
+        //        {
+        //            SelectRowByID(feature.ID).Selected = true;
+        //        }
+        //    }
+        //    _fromMapWindow = false;
+        //}
+
         public DataGridViewRow SelectRowByID(int id)
         {
             foreach (DataGridViewRow row in dataGridView1.Rows)

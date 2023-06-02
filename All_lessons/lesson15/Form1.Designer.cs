@@ -60,6 +60,9 @@
             this.zoomToLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openDocumentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.layersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
@@ -300,9 +303,10 @@
             this.zoomOutToolStripMenuItem,
             this.panToolStripMenuItem,
             this.zoomToLayerToolStripMenuItem,
-            this.layersToolStripMenuItem});
+            this.layersToolStripMenuItem,
+            this.zoomToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(301, 314);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(267, 308);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // selectToolStripMenuItem
@@ -354,12 +358,34 @@
             this.layersToolStripMenuItem.Text = "Layers";
             this.layersToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem_Click);
             // 
+            // zoomToolStripMenuItem
+            // 
+            this.zoomToolStripMenuItem.Name = "zoomToolStripMenuItem";
+            this.zoomToolStripMenuItem.Size = new System.Drawing.Size(300, 38);
+            this.zoomToolStripMenuItem.Text = "Zoom";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(0, 0);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 31);
+            this.textBox1.TabIndex = 21;
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(20, 623);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(100, 31);
+            this.textBox2.TabIndex = 22;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1600, 865);
             this.ContextMenuStrip = this.contextMenuStrip1;
+            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.displayY);
             this.Controls.Add(this.displayX);
             this.Controls.Add(this.statusStrip1);
@@ -435,6 +461,9 @@
         private System.Windows.Forms.ToolStripMenuItem zoomToLayerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openDocumentToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem layersToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem zoomToolStripMenuItem;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textBox2;
     }
 }
 

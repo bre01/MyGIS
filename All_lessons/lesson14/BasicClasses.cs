@@ -10,6 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Policy;
 using System.Text;
@@ -33,6 +34,11 @@ namespace My.GIS
             x = br.ReadDouble();
             y = br.ReadDouble();
         }
+        public GISVertex(GISVertex v)
+        {
+            CopyVertex(v);
+        }
+
 
         public double GetDistanceThisVToV(GISVertex gISVertex)
         {
@@ -250,15 +256,28 @@ namespace My.GIS
         //map coordinates is the real coordinates
         public GISVertex MapBottomLeft;
         public GISVertex MapUpRight;
+        public GISVertex DisplayBL;
+        public GISVertex DisplayUR;
         public void CopyExtent(GISMapExtent extent)
         {
             MapUpRight.CopyVertex(extent.MapUpRight);
             MapBottomLeft.CopyVertex(extent.MapBottomLeft);
         }
+        public bool Include(GISMapExtent extent)
+        {
+            return (maxX() >= extent.maxX() && minX() <= extent.minX()
+                && maxY() >= extent.maxY() && minY() <= extent.minY());
+        }
         public GISMapExtent(GISVertex bottomLeft, GISVertex upRight)
         {
             MapBottomLeft = bottomLeft;
             MapUpRight = upRight;
+        }
+        public GISMapExtent(GISMapExtent extent)
+        {
+            MapUpRight = new GISVertex(extent.MapUpRight);
+            MapBottomLeft = new GISVertex(extent.MapBottomLeft);
+
         }
         public GISMapExtent(double x1, double x2, double y1, double y2)
         {
@@ -267,10 +286,59 @@ namespace My.GIS
             MapUpRight = new GISVertex(Math.Max(x1, x2), Math.Max(y1, y2));
             MapBottomLeft = new GISVertex(Math.Min(x1, x2), Math.Min(y1, y2));
         }
+        public void Merge(GISMapExtent extent)
+        {
+            MapUpRight.x = Math.Max(MapUpRight.x, extent.MapUpRight.x);
+            MapUpRight.y = Math.Max(MapUpRight.y, extent.MapUpRight.y);
+            MapBottomLeft.x = Math.Min(MapBottomLeft.x, extent.MapBottomLeft.x);
+            MapBottomLeft.y = Math.Min(MapBottomLeft.y, extent.MapBottomLeft.y);
+        }
         // these all all properties, which I didn'e even notice, I'm so stupid
         public double minX() { return MapBottomLeft.x; }
-        public double maxX() { return MapUpRight.x; }
+        public double MinX
+        {
+            get
+            { return MapBottomLeft.x; }
 
+            set
+            {
+
+            }
+        }
+        public double MaxX
+        {
+            get
+            {
+                return MapUpRight.x;
+            }
+            set
+            {
+
+            }
+        }
+        public double MinY
+        {
+            get { return MapBottomLeft.y; }
+            set
+            {
+            }
+        }
+        public double MaxY
+        {
+            get { return MapUpRight.y; }
+            set { }
+        }
+        public double Width
+        {
+            get { return MapUpRight.x - MapBottomLeft.x; }
+            set { }
+        }
+        public double Height
+        {
+            get { return MapUpRight.y - MapBottomLeft.y; }
+            set { }
+        }
+        public double maxX() { return MapUpRight.x; }
         public double minY() { return MapBottomLeft.y; }
         public double maxY() { return MapUpRight.y; }
         public double width() { return MapUpRight.x - MapBottomLeft.x; }
@@ -342,6 +410,7 @@ namespace My.GIS
         }
 
     }
+    /*
     public class MapAndClientConverter
     {
         GISMapExtent _currentMapExtent;
@@ -358,7 +427,13 @@ namespace My.GIS
         {
             _currentMapExtent.CopyExtent(extent);
             UpdateConverter(_currentMapExtent, _clientWindowRectangle);
-        }*/
+        }
+        public GISMapExtent RectToExtent(int x1, int x2, int y1, int y2)
+        {
+            GISVertex v1 = ToMapVertex(new Point(x1, y1));
+            GISVertex v2 = ToMapVertex(new Point(x2, y2));
+            return new GISMapExtent(v1.x, v2.x, v1.y, v2.y);
+        }
 
         public MapAndClientConverter(GISMapExtent extent, Rectangle clientWindowRectangle)// current map extent and the client rectangle
         {
@@ -375,8 +450,8 @@ namespace My.GIS
             clientWindowHeight = rectangle.Height;
             //mapW = _currentMapExtent.width();
             //mapH = _currentMapExtent.height();
-            scaleX = _currentMapExtent.width()/ clientWindowWidth;
-            scaleY=_currentMapExtent.height()/ clientWindowHeight;
+            scaleX = _currentMapExtent.width() / clientWindowWidth;
+            scaleY = _currentMapExtent.height() / clientWindowHeight;
             scaleX = Math.Max(scaleX, scaleY);
             scaleY = scaleX;
             mapW = _clientWindowRectangle.Width * scaleX;
@@ -384,14 +459,16 @@ namespace My.GIS
             GISVertex center = _currentMapExtent.GetCenter();
             mapMinX = center.x - mapW / 2;
             mapMinY = center.y - mapH / 2;
-
-
-
         }
-        public GISMapExtent GetRealExtent()
+        public GISMapExtent GetDisplayExtent()
         {
             return new GISMapExtent(mapMinX, mapMinX + mapW, mapMinY, mapMinY + mapH);
         }
+        public void UpdateDisplayExtent(GISMapExtent extent)
+        {
+            UpdateConverter(extent, _clientWindowRectangle);
+        }
+        
 
         public Point ToScreenPoint(GISVertex vertex)
         {
@@ -421,6 +498,7 @@ namespace My.GIS
             UpdateConverter(_currentMapExtent, _clientWindowRectangle);
         }
     }
+    */
     public enum GISMapActions
     {
         zoomin, zoomout,
@@ -624,126 +702,7 @@ namespace My.GIS
 
     }
 
-    public class Layer
-    {
 
-        /// <naming_convention>
-        /// if it's PascalCase, it's public member (of the class)
-        /// if it's _camelCase, it's private or internal member (of the class)
-        /// if it's camelCase,  it's local variable or parameter (of the method)
-        /// </naming_convention>
-        public string Name;
-        public GISMapExtent Extent;
-        public bool DrawAttributeOrNot = false;
-        public int LabelIndex;
-        public S ShapeType;
-        private List<GISFeature> _features = new List<GISFeature>();
-        public List<GISField> Fields;
-        public List<GISFeature> Selection = new List<GISFeature>();
-
-
-        public Layer(string name, S shapeType, GISMapExtent extent)
-        {
-            this.Name = name;
-            ShapeType = shapeType;
-            Extent = extent;
-            Fields = new List<GISField>();
-        }
-        public Layer(string name, S shapeType, GISMapExtent extent, List<GISField> fields)
-        {
-            Name = name;
-            ShapeType = shapeType;
-            Extent = extent;
-            Fields = fields;
-        }
-        public SelectResult Select(GISVertex vertex, MapAndClientConverter converter)
-        {
-            GISSelect gs = new GISSelect();
-            SelectResult sr = gs.Select(vertex, _features, ShapeType, converter);
-            if (sr == SelectResult.Ok)
-            {
-                if (ShapeType == S.Polygon)
-                {
-                    for (int i = 0; i < gs.SelectedFeatures.Count; i++)
-                    {
-                        if (gs.SelectedFeatures[i].Selected == false)
-                        {
-                            gs.SelectedFeatures[i].Selected = true;
-                            Selection.Add(gs.SelectedFeatures[i]);
-                        }
-                    }
-                }
-                else
-                {
-                    if (gs.SelectedFeature.Selected == false)
-                    {
-                        gs.SelectedFeature.Selected = true;
-                        Selection.Add(gs.SelectedFeature);
-                    }
-                }
-            }
-            return sr;
-        }
-        public void ClearSelection()
-        {
-            for (int i = 0; i < Selection.Count; i++)
-                Selection[i].Selected = false;
-            Selection.Clear();
-        }
-        public void Draw(Graphics graphics, MapAndClientConverter converter)
-        {
-            GISMapExtent extent = converter.GetRealExtent();
-            for (int i = 0; i < _features.Count; i++)
-            {
-                if (extent.IntersectOrNot(_features[i].spatialPart.mapExtent))
-                {
-
-                    _features[i].Draw(graphics, converter, this.DrawAttributeOrNot, this.LabelIndex);
-                }
-
-            }
-        }
-        public void AddFeature(GISFeature feature)
-        {
-            if (_features.Count == 0)
-            {
-                feature.ID = 0;
-            }
-            else feature.ID = _features[_features.Count - 1].ID + 1;
-            _features.Add(feature);
-        }
-        public int FeatureCount()
-        {
-            return _features.Count;
-        }
-        public GISFeature GetFeature(int i)
-        {
-            return _features[i];
-        }
-        public List<GISFeature> GetAllFeatures()
-        {
-            return _features;
-        }
-        public void AddSelectedFeatureByID(int id)
-        {
-            GISFeature feature = GetFeatureByID(id);
-            feature.Selected = true;
-            Selection.Add(feature);
-        }
-        public GISFeature GetFeatureByID(int id)
-        {
-            foreach (GISFeature feature in _features)
-            {
-                if (feature.ID == id)
-                {
-                    return feature;
-                }
-            }
-            return null;
-        }
-
-
-    }
     public static class CalTool
     {
         public static GISVertex CalculateCentroid(List<GISVertex> vertexes)
@@ -968,6 +927,19 @@ namespace My.GIS
             }
             return SelectResult.UnknownType;
         }
+        public SelectResult Select(GISMapExtent extent, List<GISFeature> features)
+        {
+            SelectedFeatures.Clear();
+            for (int i = 0; i < features.Count; i++)
+            {
+                if (extent.Include(features[i].spatialPart.mapExtent))
+                {
+                    SelectedFeatures.Add(features[i]);
+                }
+            }
+            return (SelectedFeatures.Count > 0) ? SelectResult.Ok : SelectResult.TooFar;
+
+        }
         public GISMapExtent BuildExtent(GISVertex vertex, MapAndClientConverter converter)
         {
             Point p0 = converter.ToScreenPoint(vertex);
@@ -1080,5 +1052,19 @@ namespace My.GIS
         public static Color SelectedPointColor = Color.Red;
         public static Color SelectedLineColor = Color.Blue;
         public static Color SelectedPolygonFillColor = Color.Yellow;
+        public static string SHPFILE = "shp";
+        public static string MYFILE = "gis";
+        public static string MYDOC = "mydoc";
+        public static Color ZoomSelectBoxColor = Color.FromArgb(50, 255, 0, 0);
+        public static double ZoomInFactor = 0.8;
+        public static double ZoomOutFactor = 0.8;
+    }
+    public enum MOUSECOMMAND
+    {
+        Unused,
+        Select,
+        ZoomIn,
+        ZoomOut,
+        Pan,
     }
 }

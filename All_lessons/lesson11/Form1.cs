@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 
-namespace lesson10
+namespace lesson11
 {
     public partial class Form1 : Form
     {

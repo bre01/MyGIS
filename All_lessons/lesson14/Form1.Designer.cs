@@ -1,4 +1,4 @@
-﻿namespace lesson10
+﻿namespace lesson14
 {
     partial class Form1
     {
@@ -50,15 +50,25 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.displayX = new System.Windows.Forms.TextBox();
+            this.displayY = new System.Windows.Forms.TextBox();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.selectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zoomInToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zoomOutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.panToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zoomToLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(43, 29);
+            this.button1.Location = new System.Drawing.Point(85, 56);
+            this.button1.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(149, 44);
             this.button1.TabIndex = 0;
             this.button1.Text = "Open File";
             this.button1.UseVisualStyleBackColor = true;
@@ -66,9 +76,10 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(43, 58);
+            this.button2.Location = new System.Drawing.Point(85, 112);
+            this.button2.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.Size = new System.Drawing.Size(149, 44);
             this.button2.TabIndex = 1;
             this.button2.Text = "Show Map";
             this.button2.UseVisualStyleBackColor = true;
@@ -76,9 +87,10 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(258, 29);
+            this.button3.Location = new System.Drawing.Point(516, 56);
+            this.button3.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.Size = new System.Drawing.Size(149, 44);
             this.button3.TabIndex = 2;
             this.button3.Text = "Zoom in";
             this.button3.UseVisualStyleBackColor = true;
@@ -86,9 +98,10 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(339, 29);
+            this.button4.Location = new System.Drawing.Point(677, 56);
+            this.button4.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
+            this.button4.Size = new System.Drawing.Size(149, 44);
             this.button4.TabIndex = 3;
             this.button4.Text = "Zoom out";
             this.button4.UseVisualStyleBackColor = true;
@@ -96,9 +109,10 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(420, 29);
+            this.button5.Location = new System.Drawing.Point(840, 56);
+            this.button5.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(75, 23);
+            this.button5.Size = new System.Drawing.Size(149, 44);
             this.button5.TabIndex = 4;
             this.button5.Text = "Move up";
             this.button5.UseVisualStyleBackColor = true;
@@ -106,9 +120,10 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(501, 29);
+            this.button6.Location = new System.Drawing.Point(1003, 56);
+            this.button6.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(75, 23);
+            this.button6.Size = new System.Drawing.Size(149, 44);
             this.button6.TabIndex = 5;
             this.button6.Text = "Move down";
             this.button6.UseVisualStyleBackColor = true;
@@ -116,9 +131,10 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(582, 29);
+            this.button7.Location = new System.Drawing.Point(1164, 56);
+            this.button7.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(75, 23);
+            this.button7.Size = new System.Drawing.Size(149, 44);
             this.button7.TabIndex = 6;
             this.button7.Text = "Move left";
             this.button7.UseVisualStyleBackColor = true;
@@ -126,9 +142,10 @@
             // 
             // button8
             // 
-            this.button8.Location = new System.Drawing.Point(663, 29);
+            this.button8.Location = new System.Drawing.Point(1325, 56);
+            this.button8.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(75, 23);
+            this.button8.Size = new System.Drawing.Size(149, 44);
             this.button8.TabIndex = 7;
             this.button8.Text = "Move right";
             this.button8.UseVisualStyleBackColor = true;
@@ -136,49 +153,50 @@
             // 
             // x_extent_box
             // 
-            this.x_extent_box.Location = new System.Drawing.Point(55, 104);
-            this.x_extent_box.Margin = new System.Windows.Forms.Padding(2);
+            this.x_extent_box.Location = new System.Drawing.Point(109, 200);
+            this.x_extent_box.Margin = new System.Windows.Forms.Padding(4);
             this.x_extent_box.Name = "x_extent_box";
-            this.x_extent_box.Size = new System.Drawing.Size(248, 20);
+            this.x_extent_box.Size = new System.Drawing.Size(492, 31);
             this.x_extent_box.TabIndex = 8;
             this.x_extent_box.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // shape_box
             // 
-            this.shape_box.Location = new System.Drawing.Point(400, 1);
-            this.shape_box.Margin = new System.Windows.Forms.Padding(2);
+            this.shape_box.Location = new System.Drawing.Point(800, 2);
+            this.shape_box.Margin = new System.Windows.Forms.Padding(4);
             this.shape_box.Name = "shape_box";
-            this.shape_box.Size = new System.Drawing.Size(68, 20);
+            this.shape_box.Size = new System.Drawing.Size(132, 31);
             this.shape_box.TabIndex = 9;
             this.shape_box.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 106);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.Location = new System.Drawing.Point(13, 204);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(46, 13);
+            this.label1.Size = new System.Drawing.Size(76, 25);
             this.label1.TabIndex = 10;
-            this.label1.Text = "X extent";
+            this.label1.Text = "layer x";
             this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(342, 3);
-            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label2.Location = new System.Drawing.Point(684, 6);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(57, 13);
+            this.label2.Size = new System.Drawing.Size(114, 25);
             this.label2.TabIndex = 11;
             this.label2.Text = "shapeKind";
             this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // button9
             // 
-            this.button9.Location = new System.Drawing.Point(124, 58);
+            this.button9.Location = new System.Drawing.Point(248, 112);
+            this.button9.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(75, 23);
+            this.button9.Size = new System.Drawing.Size(149, 44);
             this.button9.TabIndex = 12;
             this.button9.Text = "Attributes";
             this.button9.UseVisualStyleBackColor = true;
@@ -186,10 +204,10 @@
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(286, 68);
-            this.button10.Margin = new System.Windows.Forms.Padding(2);
+            this.button10.Location = new System.Drawing.Point(572, 131);
+            this.button10.Margin = new System.Windows.Forms.Padding(4);
             this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(47, 26);
+            this.button10.Size = new System.Drawing.Size(93, 50);
             this.button10.TabIndex = 13;
             this.button10.Text = "Save as";
             this.button10.UseVisualStyleBackColor = true;
@@ -197,10 +215,10 @@
             // 
             // button11
             // 
-            this.button11.Location = new System.Drawing.Point(373, 68);
-            this.button11.Margin = new System.Windows.Forms.Padding(2);
+            this.button11.Location = new System.Drawing.Point(747, 131);
+            this.button11.Margin = new System.Windows.Forms.Padding(4);
             this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(74, 31);
+            this.button11.Size = new System.Drawing.Size(148, 60);
             this.button11.TabIndex = 14;
             this.button11.Text = "Open";
             this.button11.UseVisualStyleBackColor = true;
@@ -208,28 +226,29 @@
             // 
             // y_extent_box
             // 
-            this.y_extent_box.Location = new System.Drawing.Point(55, 142);
-            this.y_extent_box.Margin = new System.Windows.Forms.Padding(2);
+            this.y_extent_box.Location = new System.Drawing.Point(109, 272);
+            this.y_extent_box.Margin = new System.Windows.Forms.Padding(4);
             this.y_extent_box.Name = "y_extent_box";
-            this.y_extent_box.Size = new System.Drawing.Size(248, 20);
+            this.y_extent_box.Size = new System.Drawing.Size(492, 31);
             this.y_extent_box.TabIndex = 15;
             // 
             // lab
             // 
             this.lab.AutoSize = true;
-            this.lab.Location = new System.Drawing.Point(7, 147);
-            this.lab.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lab.Location = new System.Drawing.Point(13, 282);
+            this.lab.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lab.Name = "lab";
-            this.lab.Size = new System.Drawing.Size(46, 13);
+            this.lab.Size = new System.Drawing.Size(76, 25);
             this.lab.TabIndex = 16;
-            this.lab.Text = "Y extent";
+            this.lab.Text = "layer y";
             this.lab.Click += new System.EventHandler(this.label3_Click);
             // 
             // button12
             // 
-            this.button12.Location = new System.Drawing.Point(10, 187);
+            this.button12.Location = new System.Drawing.Point(20, 360);
+            this.button12.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(75, 23);
+            this.button12.Size = new System.Drawing.Size(149, 44);
             this.button12.TabIndex = 17;
             this.button12.Text = "Clear Selection";
             this.button12.UseVisualStyleBackColor = true;
@@ -240,23 +259,91 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 428);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 823);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(800, 22);
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(3, 0, 28, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(1600, 42);
             this.statusStrip1.TabIndex = 18;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(237, 32);
             this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
+            // 
+            // displayX
+            // 
+            this.displayX.Location = new System.Drawing.Point(85, 469);
+            this.displayX.Margin = new System.Windows.Forms.Padding(4);
+            this.displayX.Name = "displayX";
+            this.displayX.Size = new System.Drawing.Size(516, 31);
+            this.displayX.TabIndex = 19;
+            // 
+            // displayY
+            // 
+            this.displayY.Location = new System.Drawing.Point(85, 548);
+            this.displayY.Margin = new System.Windows.Forms.Padding(4);
+            this.displayY.Name = "displayY";
+            this.displayY.Size = new System.Drawing.Size(516, 31);
+            this.displayY.TabIndex = 20;
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.selectToolStripMenuItem,
+            this.zoomInToolStripMenuItem,
+            this.zoomOutToolStripMenuItem,
+            this.panToolStripMenuItem,
+            this.zoomToLayerToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(247, 194);
+            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
+            // 
+            // selectToolStripMenuItem
+            // 
+            this.selectToolStripMenuItem.Name = "selectToolStripMenuItem";
+            this.selectToolStripMenuItem.Size = new System.Drawing.Size(246, 38);
+            this.selectToolStripMenuItem.Text = "Select";
+            this.selectToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem_Click);
+            // 
+            // zoomInToolStripMenuItem
+            // 
+            this.zoomInToolStripMenuItem.Name = "zoomInToolStripMenuItem";
+            this.zoomInToolStripMenuItem.Size = new System.Drawing.Size(246, 38);
+            this.zoomInToolStripMenuItem.Text = "Zoom In";
+            this.zoomInToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem_Click);
+            // 
+            // zoomOutToolStripMenuItem
+            // 
+            this.zoomOutToolStripMenuItem.Name = "zoomOutToolStripMenuItem";
+            this.zoomOutToolStripMenuItem.Size = new System.Drawing.Size(246, 38);
+            this.zoomOutToolStripMenuItem.Text = "Zoom Out";
+            this.zoomOutToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem_Click);
+            // 
+            // panToolStripMenuItem
+            // 
+            this.panToolStripMenuItem.Name = "panToolStripMenuItem";
+            this.panToolStripMenuItem.Size = new System.Drawing.Size(246, 38);
+            this.panToolStripMenuItem.Text = "Pan";
+            this.panToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem_Click);
+            // 
+            // zoomToLayerToolStripMenuItem
+            // 
+            this.zoomToLayerToolStripMenuItem.Name = "zoomToLayerToolStripMenuItem";
+            this.zoomToLayerToolStripMenuItem.Size = new System.Drawing.Size(246, 38);
+            this.zoomToLayerToolStripMenuItem.Text = "Zoom To Layer";
+            this.zoomToLayerToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem_Click);
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1600, 865);
+            this.ContextMenuStrip = this.contextMenuStrip1;
+            this.Controls.Add(this.displayY);
+            this.Controls.Add(this.displayX);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.button12);
             this.Controls.Add(this.lab);
@@ -277,14 +364,21 @@
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.Name = "Form1";
             this.Text = "                                                            ";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
+            this.Click += new System.EventHandler(this.Form1_Click);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
-            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick_1);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseMove);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -313,6 +407,14 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.BindingSource bindingSource1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.TextBox displayX;
+        private System.Windows.Forms.TextBox displayY;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem selectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem zoomInToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem zoomOutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem panToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem zoomToLayerToolStripMenuItem;
     }
 }
 

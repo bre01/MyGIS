@@ -11,44 +11,80 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 
-namespace lesson14
+namespace lesson15
 {
     public partial class Form1 : Form
     {
-        MOUSECOMMAND _mouseCommand = MOUSECOMMAND.Unused;
+        MOUSECOMMAND _mouseCommand = MOUSECOMMAND.Pan;
         int _startX = 0;
         int _startY = 0;
         int _mouseMovingX = 0;
         int _mouseMovingY = 0;
         bool _mouseOnMap = false;
-        Layer _layer = null;
+        //Layer _layer = null;
+        GISDocument _document = new GISDocument();
         MapAndClientConverter _converter = null;
         Form2 _attributeWindow = null;
+        Dictionary<Layer, Form2> _allAttributeWindow = new Dictionary<Layer, Form2>();
         Bitmap _backWindow;
+
         public Form1()
         {
             InitializeComponent();
-            _converter = new MapAndClientConverter(new GISMapExtent(new GISVertex(0, 0), new GISVertex(100, 100)), ClientRectangle);
+            //_converter = new MapAndClientConverter(new GISMapExtent(new GISVertex(0, 0), new GISVertex(100, 100)), ClientRectangle);
+            this.MouseWheel += new MouseEventHandler(Form1_MouseWheel);
+            panToolStripMenuItem.Checked = true;
+        }
+        private void Form1_MouseWheel(object sender, MouseEventArgs e)
+        {
+            int i = e.Delta;
+            textBox2.Text = i.ToString();
+            if (i < 0)
+            {
+
+                GISVertex mouseOnMapLocation = _converter.ToMapVertex(new Point(e.X, e.Y));
+                GISMapExtent e1 = _converter.GetDisplayExtent();
+                double newWidth = e1.Width * GISConst.ZoomInFactor;
+                double newHeight = e1.Height * GISConst.ZoomInFactor;
+                double newMinX = mouseOnMapLocation.x - (mouseOnMapLocation.x - e1.MinX) * GISConst.ZoomInFactor;
+                double newMinY = mouseOnMapLocation.y - (mouseOnMapLocation.y - e1.MinY) * GISConst.ZoomInFactor;
+                // _layer.DisplayExtent = new GISMapExtent(newMinX, newMinX + newWidth, newMinY, newMinY + newHeight);
+                _converter.UpdateDisplayExtent(new GISMapExtent(newMinX, newMinX + newWidth, newMinY, newMinY + newHeight));
+            }
+            else if (i > 0)
+            {
+                GISMapExtent e1 = _converter.GetDisplayExtent();
+                GISVertex mouseOnMapLocation = _converter.ToMapVertex(new Point(e.X, e.Y));
+                double newWidth = e1.Width / GISConst.ZoomOutFactor;
+                double newHeight = e1.Height / GISConst.ZoomOutFactor;
+                double newMinX = mouseOnMapLocation.x - (mouseOnMapLocation.x - e1.MinX) / GISConst.ZoomOutFactor;
+                double newMinY = mouseOnMapLocation.y - (mouseOnMapLocation.y - e1.MinY) / GISConst.ZoomOutFactor;
+                _converter.UpdateDisplayExtent(new GISMapExtent(newMinX, newMinX + newWidth, newMinY, newMinY + newHeight));
+
+            }
+            DrawMap();
+            UpdateStatusBar();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Shapefile file |*.shp";
-            openFileDialog.RestoreDirectory = false;
-            openFileDialog.FilterIndex = 1;
-            openFileDialog.Multiselect = false;
-            if (openFileDialog.ShowDialog() != DialogResult.OK) return;
-            ShapefileTools shapefileTools = new ShapefileTools();
-            _layer = shapefileTools.ReadShapefile(openFileDialog.FileName);
-            _layer.DrawAttributeOrNot = false;
-            MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
-            UpdateAndDraw();
-            shape_box.Text = _layer.ShapeType.ToString();
-            x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minX(), _layer.OriginalExtent.maxX());
-            y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minY(), _layer.OriginalExtent.maxY());
-            displayX.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _converter.GetDisplayExtent().minX(), _converter.GetDisplayExtent().maxX());
-            displayY.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _converter.GetDisplayExtent().minY(), _converter.GetDisplayExtent().maxY());
+            //OpenFileDialog openFileDialog = new OpenFileDialog();
+            //openFileDialog.Filter = "Shapefile file |*.shp";
+            //openFileDialog.RestoreDirectory = false;
+            //openFileDialog.FilterIndex = 1;
+            //openFileDialog.Multiselect = false;
+            //if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+            //ShapefileTools shapefileTools = new ShapefileTools();
+            //_layer = shapefileTools.ReadShapefile(openFileDialog.FileName);
+            //_layer.DrawAttributeOrNot = false;
+            //MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
+            //UpdateAndDraw();
+            //shape_box.Text = _layer.ShapeType.ToString();
+            //x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minX(), _layer.OriginalExtent.maxX());
+            //y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minY(), _layer.OriginalExtent.maxY());
+            //displayX.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _converter.GetDisplayExtent().minX(), _converter.GetDisplayExtent().maxX());
+            //displayY.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _converter.GetDisplayExtent().minY(), _converter.GetDisplayExtent().maxY());
+
 
             /*_converter.UpdateConverter(_layer.Extent,ClientRectangle);
             DrawMap();*/
@@ -70,16 +106,22 @@ namespace lesson14
         }
         public void UpdateAndDraw()
         {
-
-            _converter.UpdateConverter(_layer.DisplayExtent, this.ClientRectangle);
+            if (_converter == null)
+            {
+                if (_document.IsEmpty()) return;
+                _converter = new MapAndClientConverter(new GISMapExtent(_document.Extent), ClientRectangle);
+            }
+            _converter.UpdateConverter(new GISMapExtent(_document.Extent), ClientRectangle);
+            //_converter.UpdateConverter(_layer.DisplayExtent, this.ClientRectangle);
             DrawMap();
             UpdateStatusBar();
         }
         void UpdateStatusBar()
         {
-            toolStripStatusLabel1.Text = _layer.Selection.Count.ToString();
-            x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minX(), _layer.OriginalExtent.maxX());
-            y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minY(), _layer.OriginalExtent.maxY());
+            //toolStripStatusLabel1.Text = _layer.Selection.Count.ToString();
+            toolStripStatusLabel1.Text = _document.Layers.Count.ToString();
+            x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _document.Extent.minX(), _document.Extent.maxX());
+            y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _document.Extent.minY(), _document.Extent.maxY());
             displayX.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _converter.GetDisplayExtent().minX(), _converter.GetDisplayExtent().maxX());
             displayY.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _converter.GetDisplayExtent().minY(), _converter.GetDisplayExtent().maxY());
         }
@@ -101,7 +143,7 @@ namespace lesson14
 
             //Graphics graphics = CreateGraphics();
             backGraphics.FillRectangle(new SolidBrush(Color.FromArgb(240, 240, 240)), ClientRectangle);
-            _layer.Draw(backGraphics, _converter);
+            _document.Draw(backGraphics, _converter);
             Graphics frontGraphics = CreateGraphics();
             frontGraphics.DrawImage(_backWindow, 0, 0);
 
@@ -157,7 +199,7 @@ namespace lesson14
 
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
-            if (_layer != null)
+            if (_document.IsEmpty())
                 UpdateAndDraw();
         }
 
@@ -170,32 +212,56 @@ namespace lesson14
         }
         private void OpenAttributeWindow()
         {
-            if (_layer == null) return;
-            if (_attributeWindow == null) _attributeWindow = new Form2(_layer, this);
-            if (_attributeWindow.IsDisposed) _attributeWindow = new Form2(_layer, this);
-            _attributeWindow.Show();
-            if (_attributeWindow.WindowState == FormWindowState.Minimized) _attributeWindow.WindowState = FormWindowState.Normal;
-            _attributeWindow.BringToFront();
+            //if (_Layer == null) return;
+            //if (_attributeWindow == null) _attributeWindow = new Form2(_layer, this);
+            //if (_attributeWindow.IsDisposed) _attributeWindow = new Form2(_layer, this);
+            //_attributeWindow.Show();
+            //if (_attributeWindow.WindowState == FormWindowState.Minimized) _attributeWindow.WindowState = FormWindowState.Normal;
+            //_attributeWindow.BringToFront();
+        }
+        public void OpenAttributeWindow(Layer layer)
+        {
+            Form2 attributeWindow = null;
+            if (_allAttributeWindow.ContainsKey(layer))
+            {
+                attributeWindow = _allAttributeWindow[layer];
+                _allAttributeWindow.Remove(layer);
+            }
+            if (attributeWindow == null)
+            {
+                attributeWindow = new Form2(layer, this);
+            }
+            if (attributeWindow.IsDisposed)
+            {
+                attributeWindow = new Form2(layer, this);
+            }
+            _allAttributeWindow.Add(layer, attributeWindow);
+            attributeWindow.Show();
+            if (attributeWindow.WindowState == FormWindowState.Minimized)
+            {
+                _attributeWindow.WindowState = FormWindowState.Normal;
+                _attributeWindow.BringToFront();
+            }
         }
 
         private void button10_Click(object sender, EventArgs e)
         {
-            SaveFileDialog dialog = new SaveFileDialog();
-            if (dialog.ShowDialog() != DialogResult.OK) return;
-            string fileName = dialog.FileName;
-            MyFiles.WriteFile(_layer, fileName);
-            MessageBox.Show("done");
+            //SaveFileDialog dialog = new SaveFileDialog();
+            //if (dialog.ShowDialog() != DialogResult.OK) return;
+            //string fileName = dialog.FileName;
+            //MyFiles.WriteFile(_layer, fileName);
+            //MessageBox.Show("done");
         }
 
         private void button11_Click(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            if (dialog.ShowDialog() != DialogResult.OK) return;
-            string fileName = dialog.FileName;
-            _layer = MyFiles.ReadFile(fileName);
-            MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
-            _converter.UpdateConverter(_layer.DisplayExtent, ClientRectangle);
-            DrawMap();
+            //OpenFileDialog dialog = new OpenFileDialog();
+            //if (dialog.ShowDialog() != DialogResult.OK) return;
+            //string fileName = dialog.FileName;
+            //_layer = MyFiles.ReadFile(fileName);
+            //MessageBox.Show("Read " + _layer.FeatureCount() + " objects");
+            //_converter.UpdateConverter(_layer.DisplayExtent, ClientRectangle);
+            //DrawMap();
 
         }
 
@@ -221,18 +287,24 @@ namespace lesson14
 
         private void button12_Click(object sender, EventArgs e)
         {
-            if (_layer == null) return;
-            _layer.ClearSelection();
+            if (_document.IsEmpty()) return;
+            _document.ClearSelection();
             UpdateAndDraw();
             toolStripStatusLabel1.Text = "0";
             UpdateAttributeWindow();
         }
         private void UpdateAttributeWindow()
         {
-            if (_layer == null) return;
-            if (_attributeWindow == null) return;
-            if (_attributeWindow.IsDisposed) return;
-            _attributeWindow.UpdateData();
+            if (_document.IsEmpty()) return;
+            //if (_attributeWindow == null) return;
+            //if (_attributeWindow.IsDisposed) return;
+            //_attributeWindow.UpdateData();
+            foreach (Form2 attributeWindow in _allAttributeWindow.Values)
+            {
+                if (attributeWindow == null) continue;
+                if (attributeWindow.IsDisposed) continue;
+                attributeWindow.UpdateData();
+            }
         }
 
         private void Form1_Paint(object sender, PaintEventArgs e)
@@ -276,23 +348,23 @@ namespace lesson14
 
         private void Form1_MouseUp(object sender, MouseEventArgs e)
         {
-            if (_layer == null) return;
+            if (_document.IsEmpty()) return;
             if (_mouseOnMap == false) return;
             _mouseOnMap = false;
             switch (_mouseCommand)
             {
                 case MOUSECOMMAND.Select:
-                    if (Control.ModifierKeys != Keys.Control) _layer.ClearSelection();
+                    if (Control.ModifierKeys != Keys.Control) _document.ClearSelection();
                     SelectResult sr = SelectResult.UnknownType;
                     if (e.X == _startX && e.Y == _startY)
                     {
                         GISVertex v = _converter.ToMapVertex(new Point(e.X, e.Y));
-                        sr = _layer.Select(v, _converter);
+                        sr = _document.Select(v, _converter);
                     }
                     else
                     {
                         GISMapExtent extent = _converter.ScreenRectToExtent(e.X, _startX, e.Y, _startY);
-                        sr = _layer.Select(extent);
+                        sr = _document.Select(extent);
                     }
                     if (sr == SelectResult.Ok || Control.ModifierKeys != Keys.Control)
                     {
@@ -361,6 +433,16 @@ namespace lesson14
                         UpdateStatusBar();
                     }
                     break;
+                    //case MOUSECOMMAND.Zoom:
+                    //    GISMapExtent e1 = _converter.GetDisplayExtent();
+                    //    GISVertex mouseOnMapLocation = _converter.ToMapVertex(new Point(e.X, e.Y));
+                    //    double newWidth = e1.Width / GISConst.ZoomOutFactor;
+                    //    double newHeight = e1.Height / GISConst.ZoomOutFactor;
+                    //    double newMinX = mouseOnMapLocation.x - (mouseOnMapLocation.x - e1.MinX) / GISConst.ZoomOutFactor;
+                    //    double newMinY = mouseOnMapLocation.y - (mouseOnMapLocation.y - e1.MinY) / GISConst.ZoomOutFactor;
+                    //    _converter.UpdateDisplayExtent(new GISMapExtent(newMinX, newMinX + newWidth, newMinY, newMinY + newHeight));
+                    //    break;
+
             }
         }
 
@@ -370,8 +452,27 @@ namespace lesson14
         }
         private void toolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (_layer == null) return;
-            if (sender.Equals(zoomToLayerToolStripMenuItem))
+            if (sender.Equals(openDocumentToolStripMenuItem))
+            {
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.Filter = "GIS Document (*." + GISConst.MYDOC + ")|*." + GISConst.MYDOC;
+                dialog.RestoreDirectory = false;
+                dialog.FilterIndex = 1;
+                dialog.Multiselect = false;
+                if (dialog.ShowDialog() != DialogResult.OK) return;
+                _document.Read(dialog.FileName);
+                if (_document.IsEmpty() == false)
+                {
+                    UpdateAndDraw();
+                }
+
+            }
+            else if (sender.Equals(layersToolStripMenuItem))
+            {
+                DocumentWindow layerControl = new DocumentWindow(_document, this);
+                layerControl.ShowDialog();
+            }
+            else if (sender.Equals(zoomToLayerToolStripMenuItem))
             {
                 UpdateAndDraw();
             }
@@ -380,15 +481,17 @@ namespace lesson14
                 selectToolStripMenuItem.Checked = false;
                 zoomInToolStripMenuItem.Checked = false;
                 zoomOutToolStripMenuItem.Checked = false;
-                panToolStripMenuItem.Checked = false;
+                //panToolStripMenuItem.Checked = false;
                 ((ToolStripMenuItem)sender).Checked = true;
                 if (sender.Equals(zoomInToolStripMenuItem))
                 {
                     _mouseCommand = MOUSECOMMAND.ZoomIn;
+                    panToolStripMenuItem.Checked = false;
                 }
                 else if (sender.Equals(zoomOutToolStripMenuItem))
                 {
                     _mouseCommand = MOUSECOMMAND.ZoomOut;
+                    panToolStripMenuItem.Checked = false;
                 }
                 else if (sender.Equals(panToolStripMenuItem))
                 {
@@ -397,6 +500,7 @@ namespace lesson14
                 else if (sender.Equals(selectToolStripMenuItem))
                 {
                     _mouseCommand = MOUSECOMMAND.Select;
+                    panToolStripMenuItem.Checked = false;
                 }
             }
         }

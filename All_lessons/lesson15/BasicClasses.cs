@@ -1043,7 +1043,7 @@ namespace My.GIS
     {
         public static double MinScreenDistance = 5;
         public static int PointSize = 3;
-        public static Color PointColor = Color.Pink;
+        public static Color PointColor = Color.Blue;
         public static Color LineColor = Color.CadetBlue;
         public static int LineWidth = 2;
         public static Color PolygonBoundaryColor = Color.White;
@@ -1066,5 +1066,6 @@ namespace My.GIS
         ZoomIn,
         ZoomOut,
         Pan,
+        Zoom,
     }
 }

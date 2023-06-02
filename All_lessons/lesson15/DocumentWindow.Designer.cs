@@ -1,4 +1,4 @@
-﻿namespace lesson14
+﻿namespace lesson15
 {
     partial class DocumentWindow
     {
@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.list = new System.Windows.Forms.ListBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
@@ -46,17 +45,8 @@
             this.button9 = new System.Windows.Forms.Button();
             this.button10 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
+            this.list = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
-            // 
-            // list
-            // 
-            this.list.FormattingEnabled = true;
-            this.list.ItemHeight = 25;
-            this.list.Location = new System.Drawing.Point(60, 47);
-            this.list.Name = "list";
-            this.list.Size = new System.Drawing.Size(983, 529);
-            this.list.TabIndex = 0;
-            this.list.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
             // checkBox1
             // 
@@ -184,6 +174,7 @@
             this.button7.TabIndex = 13;
             this.button7.Text = "tables";
             this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // button8
             // 
@@ -203,6 +194,7 @@
             this.button9.TabIndex = 15;
             this.button9.Text = "apply";
             this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // button10
             // 
@@ -212,6 +204,7 @@
             this.button10.TabIndex = 16;
             this.button10.Text = "close";
             this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // label2
             // 
@@ -221,6 +214,16 @@
             this.label2.Size = new System.Drawing.Size(95, 25);
             this.label2.TabIndex = 17;
             this.label2.Text = "File path";
+            // 
+            // list
+            // 
+            this.list.FormattingEnabled = true;
+            this.list.ItemHeight = 25;
+            this.list.Location = new System.Drawing.Point(60, 47);
+            this.list.Name = "list";
+            this.list.Size = new System.Drawing.Size(983, 529);
+            this.list.TabIndex = 0;
+            this.list.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
             // DocumentWindow
             // 
@@ -247,6 +250,7 @@
             this.Controls.Add(this.list);
             this.Name = "DocumentWindow";
             this.Text = "Documents";
+            this.Load += new System.EventHandler(this.DocumentWindow_Load);
             this.Shown += new System.EventHandler(this.Documents_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -254,8 +258,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.ListBox list;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.CheckBox checkBox3;
@@ -273,5 +275,6 @@
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ListBox list;
     }
 }

@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace lesson14
+namespace lesson15
 {
     public partial class DocumentWindow : Form
     {
@@ -38,7 +38,7 @@ namespace lesson14
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (list.SelectedItems == null) { return; }
+            if (list.SelectedItem == null) { return; }
 
             Layer layer = _document.GetLayer(list.SelectedItem.ToString());
             //layer.Selectable=checkBox1.Checked;
@@ -66,7 +66,12 @@ namespace lesson14
             dialog.FilterIndex = 1;
             dialog.Multiselect = false;
             if (dialog.ShowDialog() != DialogResult.OK) return;
-
+            Layer layer = _document.AddLayer(dialog.FileName);
+            list.Items.Insert(0, layer.Name);
+            list.SelectedIndex = list.Items.Count-1;
+            _mapWindow.UpdateAndDraw();
+            //_mapWindow.UpdateAndDraw();
+            
         }
         private void Clicked(object sender, EventArgs e)
         {
@@ -119,6 +124,7 @@ namespace lesson14
             list.Items[list.SelectedIndex] = upperName;
             _document.SwitchLayer(selectedName, upperName);
             list.SelectedIndex -= 1;
+            _mapWindow.UpdateAndDraw();
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -135,6 +141,7 @@ namespace lesson14
             list.Items[list.SelectedIndex] = lowerName;
             _document.SwitchLayer(selectedName, lowerName);
             list.SelectedIndex += 1;
+            _mapWindow.UpdateAndDraw();
 
 
         }
@@ -165,6 +172,29 @@ namespace lesson14
                 _document.Write(dialog.FileName);
                 MessageBox.Show("Done!");
             }
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if(list.SelectedItem==null) { return; }
+            Layer layer = _document.GetLayer(list.SelectedItem.ToString());
+            _mapWindow.OpenAttributeWindow(layer);
+        }
+
+        private void DocumentWindow_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            _mapWindow.UpdateAndDraw();
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            _mapWindow.UpdateAndDraw();
+            Close();
         }
         //private void DocumentWindowShow(object sender, EventArgs e)
         //{

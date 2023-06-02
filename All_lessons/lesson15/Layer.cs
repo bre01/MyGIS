@@ -99,10 +99,10 @@ namespace My.GIS
         {
             for (int i = 0; i < _features.Count; i++)
             {
-                if (extent.IntersectOrNot(_features[i].spatialPart.mapExtent))
-                {
+                //if (extent.IntersectOrNot(_features[i].spatialPart.mapExtent))
+                //{
                     _features[i].Draw(graphics, converter, this.DrawAttributeOrNot, this.LabelIndex);
-                }
+                //}
             }
         }
         public void AddFeature(GISFeature feature)

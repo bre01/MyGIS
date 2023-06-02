@@ -15,7 +15,7 @@ namespace lesson14
 {
     public partial class Form1 : Form
     {
-        MOUSECOMMAND _mouseCommand = MOUSECOMMAND.ZoomIn;
+        MOUSECOMMAND _mouseCommand = MOUSECOMMAND.Select;
         int _startX = 0;
         int _startY = 0;
         int _mouseMovingX = 0;
@@ -80,8 +80,8 @@ namespace lesson14
             toolStripStatusLabel1.Text = _layer.Selection.Count.ToString();
             x_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minX(), _layer.OriginalExtent.maxX());
             y_extent_box.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.OriginalExtent.minY(), _layer.OriginalExtent.maxY());
-            displayX.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.DisplayExtent.minX(), _layer.DisplayExtent.maxX());
-            displayY.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _layer.DisplayExtent.minY(), _layer.DisplayExtent.maxY());
+            displayX.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _converter.GetDisplayExtent().minX(), _converter.GetDisplayExtent().maxX());
+            displayY.Text = String.Format("Min:" + "{0:0.000}" + " Max:" + "{1:0.00}", _converter.GetDisplayExtent().minY(), _converter.GetDisplayExtent().maxY());
         }
 
 
@@ -97,13 +97,13 @@ namespace lesson14
                 _backWindow.Dispose();
             }
             _backWindow = new Bitmap(ClientRectangle.Width, ClientRectangle.Height);
-            Graphics graphics = Graphics.FromImage(_backWindow);
+            Graphics backGraphics = Graphics.FromImage(_backWindow);
 
             //Graphics graphics = CreateGraphics();
-            graphics.FillRectangle(new SolidBrush(Color.Black), ClientRectangle);
-            _layer.Draw(graphics, _converter);
-            Graphics graphics1 = CreateGraphics();
-            graphics1.DrawImage(_backWindow, 0, 0);
+            backGraphics.FillRectangle(new SolidBrush(Color.Black), ClientRectangle);
+            _layer.Draw(backGraphics, _converter);
+            Graphics frontGraphics = CreateGraphics();
+            frontGraphics.DrawImage(_backWindow, 0, 0);
 
         }
         private void map_button_Click(object sender, EventArgs e)
@@ -240,8 +240,8 @@ namespace lesson14
             if (_backWindow != null)
             {
                 //e.Graphics.DrawImage(_backWindow, 0, 0);
-                if (_mouseOnMap)
-                {
+                //if (_mouseOnMap)
+                //{
                     if (_mouseCommand == MOUSECOMMAND.Pan)
                     {
                         e.Graphics.DrawImage(_backWindow, _mouseMovingX - _startX, _mouseMovingY - _startY);
@@ -256,7 +256,7 @@ namespace lesson14
                     {
                         e.Graphics.DrawImage(_backWindow, 0, 0);
                     }
-                }
+            //}
             }
         }
 
@@ -325,6 +325,7 @@ namespace lesson14
                 case MOUSECOMMAND.Pan: break;
             }
         }
+
     }
 
 

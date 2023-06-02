@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +13,16 @@ namespace My.GIS
     {
         public List<Layer> Layers = new List<Layer>();
         GISMapExtent _extent;
+        public GISMapExtent Extent
+        {
+            get
+            {
+                return _extent;
+            }
+            set
+            {
+            }
+        }
         public Layer GetLayer(string layerName)
         {
             for (int i = 0; i < Layers.Count;)
@@ -101,9 +112,9 @@ namespace My.GIS
         }
         public void Write(string fileName)
         {
-            FileStream fsr=new FileStream(fileName,FileMode.Create);
-            BinaryWriter bw=new BinaryWriter(fsr);
-            for(int i=0; i < Layers.Count;i++)
+            FileStream fsr = new FileStream(fileName, FileMode.Create);
+            BinaryWriter bw = new BinaryWriter(fsr);
+            for (int i = 0; i < Layers.Count; i++)
             {
                 CalTool.WriteString(Layers[i].Name, bw);
                 bw.Write(Layers[i].DrawAttributeOrNot);
@@ -117,20 +128,61 @@ namespace My.GIS
         public void Read(string fileName)
         {
             Layers.Clear();
-            FileStream fsr=new FileStream(fileName,FileMode.Open);
-            BinaryReader br=new BinaryReader(fsr);
-            while(br.PeekChar()!=-1)
+            FileStream fsr = new FileStream(fileName, FileMode.Open);
+            BinaryReader br = new BinaryReader(fsr);
+            while (br.PeekChar() != -1)
             {
-                string path=CalTool.ReadString(br);
-                Layer layer=AddLayer(path);
-                layer.path= path;
+                string path = CalTool.ReadString(br);
+                Layer layer = AddLayer(path);
+                layer.path = path;
                 layer.DrawAttributeOrNot = br.ReadBoolean();
                 layer.LabelIndex = br.ReadInt32();
-                layer.Selectable= br.ReadBoolean();
-                layer.Visible= br.ReadBoolean();
+                layer.Selectable = br.ReadBoolean();
+                layer.Visible = br.ReadBoolean();
             }
             br.Close();
             br.Close();
+        }
+        public bool IsEmpty()
+        {
+            return (Layers.Count == 0);
+        }
+        public void ClearSelection()
+        {
+            for (int i = 0; i < Layers.Count; i++)
+            {
+                Layers[i].ClearSelection();
+            }
+        }
+        public SelectResult Select(GISVertex v, MapAndClientConverter converter)
+        {
+            SelectResult sr = SelectResult.TooFar;
+            for (int i = 0; i < Layers.Count; i++)
+            {
+                if (Layers[i].Selectable)
+                {
+                    if (Layers[i].Select(v, converter) == SelectResult.Ok)
+                    {
+                        sr = SelectResult.Ok;
+                    }
+                }
+            }
+            return sr;
+        }
+        public SelectResult Select(GISMapExtent extent)
+        {
+            SelectResult sr = SelectResult.TooFar;
+            for (int i = 0; i < Layers.Count; i++)
+            {
+                if (Layers[i].Selectable)
+                {
+                    if (Layers[i].Select(extent) == SelectResult.Ok)
+                    {
+                        sr = SelectResult.Ok;
+                    }
+                }
+            }
+            return sr;
         }
 
     }

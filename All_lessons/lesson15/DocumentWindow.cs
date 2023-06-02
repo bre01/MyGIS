@@ -66,6 +66,9 @@ namespace lesson15
             dialog.FilterIndex = 1;
             dialog.Multiselect = false;
             if (dialog.ShowDialog() != DialogResult.OK) return;
+            Layer layer = _document.AddLayer(dialog.FileName);
+            list.Items.Insert(0, layer.Name);
+            list.SelectedIndex = 0;
 
         }
         private void Clicked(object sender, EventArgs e)

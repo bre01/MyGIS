@@ -37,6 +37,10 @@ namespace My.GIS
         {
             UpdateConverter(extent, clientWindowRectangle);
         }
+        public void UpdateRectangle(Rectangle rectangle)
+        {
+            UpdateConverter(_displayMapExtent, rectangle);
+        }
 
         public void UpdateConverter(GISMapExtent extent, Rectangle rectangle)
         {

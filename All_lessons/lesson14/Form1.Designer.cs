@@ -52,8 +52,15 @@
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.displayX = new System.Windows.Forms.TextBox();
             this.displayY = new System.Windows.Forms.TextBox();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.selectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zoomInToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zoomOutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.panToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zoomToLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
@@ -147,7 +154,7 @@
             // x_extent_box
             // 
             this.x_extent_box.Location = new System.Drawing.Point(109, 200);
-            this.x_extent_box.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.x_extent_box.Margin = new System.Windows.Forms.Padding(4);
             this.x_extent_box.Name = "x_extent_box";
             this.x_extent_box.Size = new System.Drawing.Size(492, 31);
             this.x_extent_box.TabIndex = 8;
@@ -156,7 +163,7 @@
             // shape_box
             // 
             this.shape_box.Location = new System.Drawing.Point(800, 2);
-            this.shape_box.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.shape_box.Margin = new System.Windows.Forms.Padding(4);
             this.shape_box.Name = "shape_box";
             this.shape_box.Size = new System.Drawing.Size(132, 31);
             this.shape_box.TabIndex = 9;
@@ -198,7 +205,7 @@
             // button10
             // 
             this.button10.Location = new System.Drawing.Point(572, 131);
-            this.button10.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button10.Margin = new System.Windows.Forms.Padding(4);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(93, 50);
             this.button10.TabIndex = 13;
@@ -209,7 +216,7 @@
             // button11
             // 
             this.button11.Location = new System.Drawing.Point(747, 131);
-            this.button11.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button11.Margin = new System.Windows.Forms.Padding(4);
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(148, 60);
             this.button11.TabIndex = 14;
@@ -220,7 +227,7 @@
             // y_extent_box
             // 
             this.y_extent_box.Location = new System.Drawing.Point(109, 272);
-            this.y_extent_box.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.y_extent_box.Margin = new System.Windows.Forms.Padding(4);
             this.y_extent_box.Name = "y_extent_box";
             this.y_extent_box.Size = new System.Drawing.Size(492, 31);
             this.y_extent_box.TabIndex = 15;
@@ -268,7 +275,7 @@
             // displayX
             // 
             this.displayX.Location = new System.Drawing.Point(85, 469);
-            this.displayX.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.displayX.Margin = new System.Windows.Forms.Padding(4);
             this.displayX.Name = "displayX";
             this.displayX.Size = new System.Drawing.Size(516, 31);
             this.displayX.TabIndex = 19;
@@ -276,10 +283,53 @@
             // displayY
             // 
             this.displayY.Location = new System.Drawing.Point(85, 548);
-            this.displayY.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.displayY.Margin = new System.Windows.Forms.Padding(4);
             this.displayY.Name = "displayY";
             this.displayY.Size = new System.Drawing.Size(516, 31);
             this.displayY.TabIndex = 20;
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.selectToolStripMenuItem,
+            this.zoomInToolStripMenuItem,
+            this.zoomOutToolStripMenuItem,
+            this.panToolStripMenuItem,
+            this.zoomToLayerToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(247, 194);
+            // 
+            // selectToolStripMenuItem
+            // 
+            this.selectToolStripMenuItem.Name = "selectToolStripMenuItem";
+            this.selectToolStripMenuItem.Size = new System.Drawing.Size(300, 38);
+            this.selectToolStripMenuItem.Text = "Select";
+            // 
+            // zoomInToolStripMenuItem
+            // 
+            this.zoomInToolStripMenuItem.Name = "zoomInToolStripMenuItem";
+            this.zoomInToolStripMenuItem.Size = new System.Drawing.Size(300, 38);
+            this.zoomInToolStripMenuItem.Text = "Zoom In";
+            // 
+            // zoomOutToolStripMenuItem
+            // 
+            this.zoomOutToolStripMenuItem.Name = "zoomOutToolStripMenuItem";
+            this.zoomOutToolStripMenuItem.Size = new System.Drawing.Size(246, 38);
+            this.zoomOutToolStripMenuItem.Text = "Zoom Out";
+            this.zoomOutToolStripMenuItem.Click += new System.EventHandler(this.zoomOutToolStripMenuItem_Click);
+            // 
+            // panToolStripMenuItem
+            // 
+            this.panToolStripMenuItem.Name = "panToolStripMenuItem";
+            this.panToolStripMenuItem.Size = new System.Drawing.Size(300, 38);
+            this.panToolStripMenuItem.Text = "Pan";
+            // 
+            // zoomToLayerToolStripMenuItem
+            // 
+            this.zoomToLayerToolStripMenuItem.Name = "zoomToLayerToolStripMenuItem";
+            this.zoomToLayerToolStripMenuItem.Size = new System.Drawing.Size(300, 38);
+            this.zoomToLayerToolStripMenuItem.Text = "Zoom To Layer";
             // 
             // Form1
             // 
@@ -319,6 +369,7 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -349,6 +400,12 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.TextBox displayX;
         private System.Windows.Forms.TextBox displayY;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem selectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem zoomInToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem zoomOutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem panToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem zoomToLayerToolStripMenuItem;
     }
 }
 

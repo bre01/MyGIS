@@ -1057,7 +1057,7 @@ namespace My.GIS
         public static string MYDOC = "mydoc";
         public static Color ZoomSelectBoxColor = Color.FromArgb(50, 255, 0, 0);
         public static double ZoomInFactor = 0.8;
-
+        public static double ZoomOutFactor = 0.8;
     }
     public enum MOUSECOMMAND
     {

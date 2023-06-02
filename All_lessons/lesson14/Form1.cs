@@ -15,7 +15,7 @@ namespace lesson14
 {
     public partial class Form1 : Form
     {
-        MOUSECOMMAND _mouseCommand = MOUSECOMMAND.Select;
+        MOUSECOMMAND _mouseCommand = MOUSECOMMAND.Pan;
         int _startX = 0;
         int _startY = 0;
         int _mouseMovingX = 0;
@@ -100,7 +100,7 @@ namespace lesson14
             Graphics backGraphics = Graphics.FromImage(_backWindow);
 
             //Graphics graphics = CreateGraphics();
-            backGraphics.FillRectangle(new SolidBrush(Color.Black), ClientRectangle);
+            backGraphics.FillRectangle(new SolidBrush(Color.FromArgb(240, 240, 240)), ClientRectangle);
             _layer.Draw(backGraphics, _converter);
             Graphics frontGraphics = CreateGraphics();
             frontGraphics.DrawImage(_backWindow, 0, 0);
@@ -242,21 +242,21 @@ namespace lesson14
                 //e.Graphics.DrawImage(_backWindow, 0, 0);
                 //if (_mouseOnMap)
                 //{
-                    if (_mouseCommand == MOUSECOMMAND.Pan)
-                    {
-                        e.Graphics.DrawImage(_backWindow, _mouseMovingX - _startX, _mouseMovingY - _startY);
-                    }
-                    else if (_mouseCommand != MOUSECOMMAND.Unused)
-                    {
-                        e.Graphics.DrawImage(_backWindow, 0, 0);
-                        e.Graphics.FillRectangle(new SolidBrush(GISConst.ZoomSelectBoxColor),
-                            new Rectangle(Math.Min(_startX, _mouseMovingX), Math.Min(_startY, _mouseMovingY), Math.Abs(_startX - _mouseMovingX), Math.Abs(_startY - _mouseMovingY)));
-                    }
-                    else
-                    {
-                        e.Graphics.DrawImage(_backWindow, 0, 0);
-                    }
-            //}
+                if (_mouseCommand == MOUSECOMMAND.Pan)
+                {
+                    e.Graphics.DrawImage(_backWindow, _mouseMovingX - _startX, _mouseMovingY - _startY);
+                }
+                else if (_mouseCommand != MOUSECOMMAND.Unused)
+                {
+                    e.Graphics.DrawImage(_backWindow, 0, 0);
+                    e.Graphics.FillRectangle(new SolidBrush(GISConst.ZoomSelectBoxColor),
+                        new Rectangle(Math.Min(_startX, _mouseMovingX), Math.Min(_startY, _mouseMovingY), Math.Abs(_startX - _mouseMovingX), Math.Abs(_startY - _mouseMovingY)));
+                }
+                else
+                {
+                    e.Graphics.DrawImage(_backWindow, 0, 0);
+                }
+                //}
             }
         }
 
@@ -321,11 +321,53 @@ namespace lesson14
                     DrawMap();
                     UpdateStatusBar();
                     break;
-                case MOUSECOMMAND.ZoomOut: break;
-                case MOUSECOMMAND.Pan: break;
+                case MOUSECOMMAND.ZoomOut:
+                    if (e.X == _startX && e.Y == _startY)
+                    {
+                        GISMapExtent e1 = _converter.GetDisplayExtent();
+                        GISVertex mouseOnMapLocation = _converter.ToMapVertex(new Point(e.X, e.Y));
+                        double newWidth = e1.Width / GISConst.ZoomOutFactor;
+                        double newHeight = e1.Height / GISConst.ZoomOutFactor;
+                        double newMinX = mouseOnMapLocation.x - (mouseOnMapLocation.x - e1.MinX)/ GISConst.ZoomOutFactor;
+                        double newMinY = mouseOnMapLocation.y - (mouseOnMapLocation.y - e1.MinY) / GISConst.ZoomOutFactor;
+                        _converter.UpdateDisplayExtent(new GISMapExtent(newMinX,newMinX+newWidth,newMinY,newMinY+newHeight));   
+
+                    }
+                    else
+                    {
+                        GISMapExtent e3=_converter.ScreenRectToExtent(e.X,_startX,e.Y,_startY);
+                        GISMapExtent e1 = _converter.GetDisplayExtent();
+                        double newWidth = e1.Width * e1.Width / e3.Width;
+                        double newHeight=e1.Height* e1.Height / e3.Height;
+                        double newMinX = e3.MinX - (e3.MinX - e1.MinX) * newWidth / e1.Width;
+                        double newMinY = e3.MinY - (e3.MinY - e1.MinY) * newHeight / e1.Height;
+                        _converter.UpdateDisplayExtent(new GISMapExtent(newMinX,newMinX+newWidth,newMinY, newMinY+newHeight));
+                    }
+                    DrawMap();
+                    UpdateStatusBar();
+                    break;
+                case MOUSECOMMAND.Pan:
+                    if (e.X != _startX||e.Y!=_startY)
+                    {
+                        GISMapExtent e1 = _converter.GetDisplayExtent();
+                        GISVertex mouseOnMapLocation1=_converter.ToMapVertex(new Point(_startX, _startY));
+                        GISVertex mouseOnMapLocation2=_converter.ToMapVertex(new Point(e.X,e.Y));
+                        double newWidth = e1.Width;
+                        double newHeight = e1.Height;
+                        double newMinX=e1.MinX-(mouseOnMapLocation2.x-mouseOnMapLocation1.x);
+                        double newMinY=e1.MinY-(mouseOnMapLocation2.y-mouseOnMapLocation1.y);
+                        _converter.UpdateDisplayExtent(new GISMapExtent(newMinX,newMinX+newWidth,newMinY,newMinY+newHeight));
+                        DrawMap();
+                        UpdateStatusBar();
+                    }
+                    break;
             }
         }
 
+        private void zoomOutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
 

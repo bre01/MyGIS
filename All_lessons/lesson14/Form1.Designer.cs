@@ -299,43 +299,49 @@
             this.zoomToLayerToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(247, 194);
+            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // selectToolStripMenuItem
             // 
             this.selectToolStripMenuItem.Name = "selectToolStripMenuItem";
-            this.selectToolStripMenuItem.Size = new System.Drawing.Size(300, 38);
+            this.selectToolStripMenuItem.Size = new System.Drawing.Size(246, 38);
             this.selectToolStripMenuItem.Text = "Select";
+            this.selectToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem_Click);
             // 
             // zoomInToolStripMenuItem
             // 
             this.zoomInToolStripMenuItem.Name = "zoomInToolStripMenuItem";
-            this.zoomInToolStripMenuItem.Size = new System.Drawing.Size(300, 38);
+            this.zoomInToolStripMenuItem.Size = new System.Drawing.Size(246, 38);
             this.zoomInToolStripMenuItem.Text = "Zoom In";
+            this.zoomInToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem_Click);
             // 
             // zoomOutToolStripMenuItem
             // 
             this.zoomOutToolStripMenuItem.Name = "zoomOutToolStripMenuItem";
             this.zoomOutToolStripMenuItem.Size = new System.Drawing.Size(246, 38);
             this.zoomOutToolStripMenuItem.Text = "Zoom Out";
-            this.zoomOutToolStripMenuItem.Click += new System.EventHandler(this.zoomOutToolStripMenuItem_Click);
+            this.zoomOutToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem_Click);
             // 
             // panToolStripMenuItem
             // 
             this.panToolStripMenuItem.Name = "panToolStripMenuItem";
-            this.panToolStripMenuItem.Size = new System.Drawing.Size(300, 38);
+            this.panToolStripMenuItem.Size = new System.Drawing.Size(246, 38);
             this.panToolStripMenuItem.Text = "Pan";
+            this.panToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem_Click);
             // 
             // zoomToLayerToolStripMenuItem
             // 
             this.zoomToLayerToolStripMenuItem.Name = "zoomToLayerToolStripMenuItem";
-            this.zoomToLayerToolStripMenuItem.Size = new System.Drawing.Size(300, 38);
+            this.zoomToLayerToolStripMenuItem.Size = new System.Drawing.Size(246, 38);
             this.zoomToLayerToolStripMenuItem.Text = "Zoom To Layer";
+            this.zoomToLayerToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1600, 865);
+            this.ContextMenuStrip = this.contextMenuStrip1;
             this.Controls.Add(this.displayY);
             this.Controls.Add(this.displayX);
             this.Controls.Add(this.statusStrip1);
@@ -361,8 +367,11 @@
             this.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.Name = "Form1";
             this.Text = "                                                            ";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
+            this.Click += new System.EventHandler(this.Form1_Click);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick_1);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);

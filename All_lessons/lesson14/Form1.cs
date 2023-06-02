@@ -15,7 +15,7 @@ namespace lesson14
 {
     public partial class Form1 : Form
     {
-        MOUSECOMMAND _mouseCommand = MOUSECOMMAND.Pan;
+        MOUSECOMMAND _mouseCommand = MOUSECOMMAND.Unused;
         int _startX = 0;
         int _startY = 0;
         int _mouseMovingX = 0;
@@ -328,35 +328,35 @@ namespace lesson14
                         GISVertex mouseOnMapLocation = _converter.ToMapVertex(new Point(e.X, e.Y));
                         double newWidth = e1.Width / GISConst.ZoomOutFactor;
                         double newHeight = e1.Height / GISConst.ZoomOutFactor;
-                        double newMinX = mouseOnMapLocation.x - (mouseOnMapLocation.x - e1.MinX)/ GISConst.ZoomOutFactor;
+                        double newMinX = mouseOnMapLocation.x - (mouseOnMapLocation.x - e1.MinX) / GISConst.ZoomOutFactor;
                         double newMinY = mouseOnMapLocation.y - (mouseOnMapLocation.y - e1.MinY) / GISConst.ZoomOutFactor;
-                        _converter.UpdateDisplayExtent(new GISMapExtent(newMinX,newMinX+newWidth,newMinY,newMinY+newHeight));   
+                        _converter.UpdateDisplayExtent(new GISMapExtent(newMinX, newMinX + newWidth, newMinY, newMinY + newHeight));
 
                     }
                     else
                     {
-                        GISMapExtent e3=_converter.ScreenRectToExtent(e.X,_startX,e.Y,_startY);
+                        GISMapExtent e3 = _converter.ScreenRectToExtent(e.X, _startX, e.Y, _startY);
                         GISMapExtent e1 = _converter.GetDisplayExtent();
                         double newWidth = e1.Width * e1.Width / e3.Width;
-                        double newHeight=e1.Height* e1.Height / e3.Height;
+                        double newHeight = e1.Height * e1.Height / e3.Height;
                         double newMinX = e3.MinX - (e3.MinX - e1.MinX) * newWidth / e1.Width;
                         double newMinY = e3.MinY - (e3.MinY - e1.MinY) * newHeight / e1.Height;
-                        _converter.UpdateDisplayExtent(new GISMapExtent(newMinX,newMinX+newWidth,newMinY, newMinY+newHeight));
+                        _converter.UpdateDisplayExtent(new GISMapExtent(newMinX, newMinX + newWidth, newMinY, newMinY + newHeight));
                     }
                     DrawMap();
                     UpdateStatusBar();
                     break;
                 case MOUSECOMMAND.Pan:
-                    if (e.X != _startX||e.Y!=_startY)
+                    if (e.X != _startX || e.Y != _startY)
                     {
                         GISMapExtent e1 = _converter.GetDisplayExtent();
-                        GISVertex mouseOnMapLocation1=_converter.ToMapVertex(new Point(_startX, _startY));
-                        GISVertex mouseOnMapLocation2=_converter.ToMapVertex(new Point(e.X,e.Y));
+                        GISVertex mouseOnMapLocation1 = _converter.ToMapVertex(new Point(_startX, _startY));
+                        GISVertex mouseOnMapLocation2 = _converter.ToMapVertex(new Point(e.X, e.Y));
                         double newWidth = e1.Width;
                         double newHeight = e1.Height;
-                        double newMinX=e1.MinX-(mouseOnMapLocation2.x-mouseOnMapLocation1.x);
-                        double newMinY=e1.MinY-(mouseOnMapLocation2.y-mouseOnMapLocation1.y);
-                        _converter.UpdateDisplayExtent(new GISMapExtent(newMinX,newMinX+newWidth,newMinY,newMinY+newHeight));
+                        double newMinX = e1.MinX - (mouseOnMapLocation2.x - mouseOnMapLocation1.x);
+                        double newMinY = e1.MinY - (mouseOnMapLocation2.y - mouseOnMapLocation1.y);
+                        _converter.UpdateDisplayExtent(new GISMapExtent(newMinX, newMinX + newWidth, newMinY, newMinY + newHeight));
                         DrawMap();
                         UpdateStatusBar();
                     }
@@ -364,9 +364,58 @@ namespace lesson14
             }
         }
 
-        private void zoomOutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
 
+        }
+        private void toolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_layer == null) return;
+            if (sender.Equals(zoomToLayerToolStripMenuItem))
+            {
+                UpdateAndDraw();
+            }
+            else
+            {
+                selectToolStripMenuItem.Checked = false;
+                zoomInToolStripMenuItem.Checked = false;
+                zoomOutToolStripMenuItem.Checked = false;
+                panToolStripMenuItem.Checked = false;
+                ((ToolStripMenuItem)sender).Checked = true;
+                if (sender.Equals(zoomInToolStripMenuItem))
+                {
+                    _mouseCommand = MOUSECOMMAND.ZoomIn;
+                }
+                else if (sender.Equals(zoomOutToolStripMenuItem))
+                {
+                    _mouseCommand = MOUSECOMMAND.ZoomOut;
+                }
+                else if (sender.Equals(panToolStripMenuItem))
+                {
+                    _mouseCommand = MOUSECOMMAND.Pan;
+                }
+                else if (sender.Equals(selectToolStripMenuItem))
+                {
+                    _mouseCommand = MOUSECOMMAND.Select;
+                }
+            }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void Form1_MouseClick_1(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                contextMenuStrip1.Show(this.PointToScreen(new Point(e.X, e.Y)));
+            }
         }
     }
 

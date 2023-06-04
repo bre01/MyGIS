@@ -16,6 +16,39 @@ namespace My.GIS
         {
             InitializeComponent();
             DoubleBuffered = true;
+            this.MouseWheel += new MouseEventHandler(GISPanel_MouseWheel);
+            panToolStripMenuItem.Checked = true;
+            this.AutoSize = true;
+
+        }
+         private void GISPanel_MouseWheel(object sender, MouseEventArgs e)
+        {
+            int i = e.Delta;
+            if (i < 0)
+            {
+
+                GISVertex mouseOnMapLocation = _converter.ToMapVertex(new Point(e.X, e.Y));
+                GISMapExtent e1 = _converter.GetDisplayExtent();
+                double newWidth = e1.Width * GISConst.ZoomInFactor;
+                double newHeight = e1.Height * GISConst.ZoomInFactor;
+                double newMinX = mouseOnMapLocation.x - (mouseOnMapLocation.x - e1.MinX) * GISConst.ZoomInFactor;
+                double newMinY = mouseOnMapLocation.y - (mouseOnMapLocation.y - e1.MinY) * GISConst.ZoomInFactor;
+                // _layer.DisplayExtent = new GISMapExtent(newMinX, newMinX + newWidth, newMinY, newMinY + newHeight);
+                _converter.UpdateDisplayExtent(new GISMapExtent(newMinX, newMinX + newWidth, newMinY, newMinY + newHeight));
+            }
+            else if (i > 0)
+            {
+                GISMapExtent e1 = _converter.GetDisplayExtent();
+                GISVertex mouseOnMapLocation = _converter.ToMapVertex(new Point(e.X, e.Y));
+                double newWidth = e1.Width / GISConst.ZoomOutFactor;
+                double newHeight = e1.Height / GISConst.ZoomOutFactor;
+                double newMinX = mouseOnMapLocation.x - (mouseOnMapLocation.x - e1.MinX) / GISConst.ZoomOutFactor;
+                double newMinY = mouseOnMapLocation.y - (mouseOnMapLocation.y - e1.MinY) / GISConst.ZoomOutFactor;
+                _converter.UpdateDisplayExtent(new GISMapExtent(newMinX, newMinX + newWidth, newMinY, newMinY + newHeight));
+
+            }
+            DrawMap();
+            UpdateStatusBar();
         }
         MOUSECOMMAND _mouseCommand = MOUSECOMMAND.Pan;
         int _startX = 0;
@@ -310,7 +343,7 @@ namespace My.GIS
             }
         }
 
-       
+
 
         private void GISPanel_MouseClick_1(object sender, MouseEventArgs e)
         {

@@ -1,6 +1,6 @@
-﻿namespace lesson16
+﻿namespace My.GIS
 {
-    partial class Form2
+    partial class AttributeWindow
     {
         /// <summary>
         /// Required designer variable.

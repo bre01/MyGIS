@@ -16,8 +16,8 @@ namespace My.GIS
     {
         Layer _layer;
         bool _fromMapWindow = true;
-        Form1 _mapWindow = null;
-        public AttributeWindow(Layer layer, Form1 mapWindow)
+        GISPanel _mapWindow = null;
+        public AttributeWindow(Layer layer, GISPanel mapWindow)
         {
             InitializeComponent();
             _layer = layer;

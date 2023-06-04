@@ -1,4 +1,4 @@
-﻿namespace lesson16
+﻿namespace My.GIS
 {
     partial class DocumentWindow
     {

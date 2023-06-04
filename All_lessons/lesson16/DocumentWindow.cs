@@ -15,8 +15,8 @@ namespace My.GIS
     public partial class DocumentWindow : Form
     {
         GISDocument _document;
-        Form1 _mapWindow;
-        public DocumentWindow(GISDocument document, Form1 mapWindow)
+        GISPanel _mapWindow;
+        public DocumentWindow(GISDocument document, GISPanel mapWindow)
         {
             InitializeComponent();
             _document = document;

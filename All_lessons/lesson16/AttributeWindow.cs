@@ -8,16 +8,16 @@ using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using My.GIS;
 
-namespace lesson15
+
+namespace My.GIS
 {
-    public partial class Form2 : Form
+    public partial class AttributeWindow : Form
     {
         Layer _layer;
         bool _fromMapWindow = true;
         Form1 _mapWindow = null;
-        public Form2(Layer layer, Form1 mapWindow)
+        public AttributeWindow(Layer layer, Form1 mapWindow)
         {
             InitializeComponent();
             _layer = layer;
@@ -69,10 +69,10 @@ namespace lesson15
             _fromMapWindow = true;
             dataGridView1.ClearSelection();
 
-                foreach (GISFeature feature in _layer.Selection)
-                {
-                    SelectRowByID(feature.ID).Selected = true;
-                }
+            foreach (GISFeature feature in _layer.Selection)
+            {
+                SelectRowByID(feature.ID).Selected = true;
+            }
             _fromMapWindow = false;
             Console.WriteLine();
         }

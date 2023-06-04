@@ -56,6 +56,9 @@ namespace My.GIS
             comboBox1.SelectedIndex = layer.LabelIndex;
             label1.Text = layer.path;
             textBox1.Text = layer.Name;
+            button11.BackColor = layer.Thematic.InsideColor;
+            button12.BackColor = layer.Thematic.OutsideColor;
+            textBox2.Text = layer.Thematic.Size.ToString();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -68,10 +71,10 @@ namespace My.GIS
             if (dialog.ShowDialog() != DialogResult.OK) return;
             Layer layer = _document.AddLayer(dialog.FileName);
             list.Items.Insert(0, layer.Name);
-            list.SelectedIndex = list.Items.Count-1;
+            list.SelectedIndex = list.Items.Count - 1;
             _mapWindow.UpdateAndDraw();
             //_mapWindow.UpdateAndDraw();
-            
+
         }
         private void Clicked(object sender, EventArgs e)
         {
@@ -83,6 +86,9 @@ namespace My.GIS
             layer.Visible = checkBox2.Checked;
             layer.DrawAttributeOrNot = checkBox3.Checked;
             layer.LabelIndex = comboBox1.SelectedIndex;
+            layer.Thematic.InsideColor = button11.BackColor;
+            layer.Thematic.OutsideColor= button12.BackColor;
+            layer.Thematic.Size = (textBox2.Text == "")? layer.Thematic.Size:Int32.Parse(textBox2.Text);
 
         }
 
@@ -149,13 +155,13 @@ namespace My.GIS
         private void button3_Click(object sender, EventArgs e)
         {
             if (list.SelectedItem == null) { return; }
-            SaveFileDialog dialog= new SaveFileDialog();
+            SaveFileDialog dialog = new SaveFileDialog();
             dialog.Filter = "GIS file(*." + GISConst.MYFILE + ")|*." + GISConst.MYFILE;
             dialog.FilterIndex = 1;
             dialog.RestoreDirectory = false;
-            if(dialog.ShowDialog() == DialogResult.OK)
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
-                Layer layer=_document.GetLayer(list.SelectedItem.ToString());
+                Layer layer = _document.GetLayer(list.SelectedItem.ToString());
                 MyFiles.WriteFile(layer, dialog.FileName);
                 MessageBox.Show("Done!");
             }
@@ -163,11 +169,11 @@ namespace My.GIS
 
         private void button4_Click(object sender, EventArgs e)
         {
-            SaveFileDialog dialog= new SaveFileDialog();
+            SaveFileDialog dialog = new SaveFileDialog();
             dialog.Filter = "GIS Document(*." + GISConst.MYDOC + ")|*." + GISConst.MYDOC;
-            dialog.FilterIndex=1;
+            dialog.FilterIndex = 1;
             dialog.RestoreDirectory = false;
-            if(dialog.ShowDialog()== DialogResult.OK)
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
                 _document.Write(dialog.FileName);
                 MessageBox.Show("Done!");
@@ -176,7 +182,7 @@ namespace My.GIS
 
         private void button7_Click(object sender, EventArgs e)
         {
-            if(list.SelectedItem==null) { return; }
+            if (list.SelectedItem == null) { return; }
             Layer layer = _document.GetLayer(list.SelectedItem.ToString());
             _mapWindow.OpenAttributeWindow(layer);
         }
@@ -195,6 +201,23 @@ namespace My.GIS
         {
             _mapWindow.UpdateAndDraw();
             Close();
+        }
+        private void button11_Click(object sender, EventArgs e)
+
+        {
+        }
+
+
+        private void SetColor_Click(object sender, EventArgs e)
+        {
+            ColorDialog dialog = new ColorDialog();
+            dialog.Color = ((Button)sender).BackColor;
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                ((Button)sender).BackColor = dialog.Color;
+                Clicked(sender, e);
+            }
+
         }
         //private void DocumentWindowShow(object sender, EventArgs e)
         //{

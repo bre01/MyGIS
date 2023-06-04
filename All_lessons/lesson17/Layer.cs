@@ -30,7 +30,6 @@ namespace My.GIS
         public string path = "";
         public GISThematic Thematic;
 
-
         public Layer(string name, S shapeType, GISMapExtent extent)
         {
             this.Name = name;
@@ -42,7 +41,7 @@ namespace My.GIS
             Thematic = new GISThematic(shapeType);
         }
 
-        public Layer(string name, S shapeType, GISMapExtent extent, List<GISField> fields)
+        public Layer(string name, S shapeType, GISMapExtent extent, List<GISField> fields=null)
         {
             Name = name;
             ShapeType = shapeType;
@@ -86,26 +85,26 @@ namespace My.GIS
                 Selection[i].Selected = false;
             Selection.Clear();
         }
-        public void Draw(Graphics graphics, MapAndClientConverter converter)
-        {
-            GISMapExtent extent = converter.GetDisplayExtent();
-            for (int i = 0; i < _features.Count; i++)
-            {
-                if (extent.IntersectOrNot(_features[i].spatialPart.mapExtent))
-                {
+        //public void Draw(Graphics graphics, MapAndClientConverter converter)
+        //{
+        //    GISMapExtent extent = converter.GetDisplayExtent();
+        //    for (int i = 0; i < _features.Count; i++)
+        //    {
+        //        if (extent.IntersectOrNot(_features[i].spatialPart.mapExtent))
+        //        {
 
-                    _features[i].Draw(graphics, converter, this.DrawAttributeOrNot, this.LabelIndex);
-                }
+        //            _features[i].Draw(graphics, converter, this.DrawAttributeOrNot, this.LabelIndex, this.Thematic);
+        //        }
 
-            }
-        }
-        public void Draw(Graphics graphics, MapAndClientConverter converter, GISMapExtent extent)
+        //    }
+        //}
+        public void Draw(Graphics graphics, MapAndClientConverter converter, GISMapExtent extent=null)
         {
             for (int i = 0; i < _features.Count; i++)
             {
                 //if (extent.IntersectOrNot(_features[i].spatialPart.mapExtent))
                 //{
-                    _features[i].Draw(graphics, converter, this.DrawAttributeOrNot, this.LabelIndex);
+                _features[i].Draw(graphics, converter, this.DrawAttributeOrNot, this.LabelIndex, this.Thematic);
                 //}
             }
         }

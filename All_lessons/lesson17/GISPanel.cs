@@ -12,6 +12,24 @@ namespace My.GIS
 {
     public partial class GISPanel : UserControl
     {
+        MOUSECOMMAND _mouseCommand = MOUSECOMMAND.Pan;
+        int _startX = 0;
+        int _startY = 0;
+        int _mouseMovingX = 0;
+        int _mouseMovingY = 0;
+        bool _mouseOnMap = false;
+        //Layer _layer = null;
+        GISDocument _document = new GISDocument();
+        MapAndClientConverter _converter = null;
+        AttributeWindow _attributeWindow = null;
+        Dictionary<Layer, AttributeWindow> _allAttributeWindow = new Dictionary<Layer, AttributeWindow>();
+        Bitmap _backWindow;
+        public GISDocument Document
+        {
+            get { return _document; }
+            set { _document = value; }
+        }
+
         public GISPanel()
         {
             InitializeComponent();
@@ -21,7 +39,7 @@ namespace My.GIS
             this.AutoSize = true;
 
         }
-         private void GISPanel_MouseWheel(object sender, MouseEventArgs e)
+        private void GISPanel_MouseWheel(object sender, MouseEventArgs e)
         {
             int i = e.Delta;
             if (i < 0)
@@ -50,18 +68,6 @@ namespace My.GIS
             DrawMap();
             UpdateStatusBar();
         }
-        MOUSECOMMAND _mouseCommand = MOUSECOMMAND.Pan;
-        int _startX = 0;
-        int _startY = 0;
-        int _mouseMovingX = 0;
-        int _mouseMovingY = 0;
-        bool _mouseOnMap = false;
-        //Layer _layer = null;
-        GISDocument _document = new GISDocument();
-        MapAndClientConverter _converter = null;
-        AttributeWindow _attributeWindow = null;
-        Dictionary<Layer, AttributeWindow> _allAttributeWindow = new Dictionary<Layer, AttributeWindow>();
-        Bitmap _backWindow;
         public void UpdateAndDraw()
         {
             if (_converter == null)

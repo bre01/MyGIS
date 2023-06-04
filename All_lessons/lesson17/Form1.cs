@@ -16,5 +16,11 @@ namespace lesson17
         {
             InitializeComponent();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            gisPanel1.Document.Layers[0].Thematic.InsideColor = Color.Red;
+            gisPanel1.UpdateAndDraw();
+        }
     }
 }

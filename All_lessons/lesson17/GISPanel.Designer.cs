@@ -37,7 +37,6 @@
             this.panToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.zoomToLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.layersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.zoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.contextMenuStrip1.SuspendLayout();
@@ -54,66 +53,58 @@
             this.zoomOutToolStripMenuItem,
             this.panToolStripMenuItem,
             this.zoomToLayerToolStripMenuItem,
-            this.layersToolStripMenuItem,
-            this.zoomToolStripMenuItem});
+            this.layersToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(267, 308);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(301, 314);
             // 
             // openDocumentToolStripMenuItem
             // 
             this.openDocumentToolStripMenuItem.Name = "openDocumentToolStripMenuItem";
-            this.openDocumentToolStripMenuItem.Size = new System.Drawing.Size(266, 38);
+            this.openDocumentToolStripMenuItem.Size = new System.Drawing.Size(300, 38);
             this.openDocumentToolStripMenuItem.Text = "Open Document";
             this.openDocumentToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem_Click);
             // 
             // selectToolStripMenuItem
             // 
             this.selectToolStripMenuItem.Name = "selectToolStripMenuItem";
-            this.selectToolStripMenuItem.Size = new System.Drawing.Size(266, 38);
+            this.selectToolStripMenuItem.Size = new System.Drawing.Size(300, 38);
             this.selectToolStripMenuItem.Text = "Select";
             this.selectToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem_Click);
             // 
             // zoomInToolStripMenuItem
             // 
             this.zoomInToolStripMenuItem.Name = "zoomInToolStripMenuItem";
-            this.zoomInToolStripMenuItem.Size = new System.Drawing.Size(266, 38);
+            this.zoomInToolStripMenuItem.Size = new System.Drawing.Size(300, 38);
             this.zoomInToolStripMenuItem.Text = "Zoom In";
             this.zoomInToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem_Click);
             // 
             // zoomOutToolStripMenuItem
             // 
             this.zoomOutToolStripMenuItem.Name = "zoomOutToolStripMenuItem";
-            this.zoomOutToolStripMenuItem.Size = new System.Drawing.Size(266, 38);
+            this.zoomOutToolStripMenuItem.Size = new System.Drawing.Size(300, 38);
             this.zoomOutToolStripMenuItem.Text = "Zoom Out";
             this.zoomOutToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem_Click);
             // 
             // panToolStripMenuItem
             // 
             this.panToolStripMenuItem.Name = "panToolStripMenuItem";
-            this.panToolStripMenuItem.Size = new System.Drawing.Size(266, 38);
+            this.panToolStripMenuItem.Size = new System.Drawing.Size(300, 38);
             this.panToolStripMenuItem.Text = "Pan";
             this.panToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem_Click);
             // 
             // zoomToLayerToolStripMenuItem
             // 
             this.zoomToLayerToolStripMenuItem.Name = "zoomToLayerToolStripMenuItem";
-            this.zoomToLayerToolStripMenuItem.Size = new System.Drawing.Size(266, 38);
+            this.zoomToLayerToolStripMenuItem.Size = new System.Drawing.Size(300, 38);
             this.zoomToLayerToolStripMenuItem.Text = "Zoom To Layer";
             this.zoomToLayerToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem_Click);
             // 
             // layersToolStripMenuItem
             // 
             this.layersToolStripMenuItem.Name = "layersToolStripMenuItem";
-            this.layersToolStripMenuItem.Size = new System.Drawing.Size(266, 38);
+            this.layersToolStripMenuItem.Size = new System.Drawing.Size(300, 38);
             this.layersToolStripMenuItem.Text = "Layers";
             this.layersToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem_Click);
-            // 
-            // zoomToolStripMenuItem
-            // 
-            this.zoomToolStripMenuItem.Name = "zoomToolStripMenuItem";
-            this.zoomToolStripMenuItem.Size = new System.Drawing.Size(266, 38);
-            this.zoomToolStripMenuItem.Text = "Zoom";
-            this.zoomToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
@@ -164,7 +155,6 @@
         private System.Windows.Forms.ToolStripMenuItem panToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem zoomToLayerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem layersToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem zoomToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
     }
